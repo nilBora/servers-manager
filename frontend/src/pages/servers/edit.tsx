@@ -1,5 +1,5 @@
 import React from 'react';
-import { Edit, useForm } from '@refinedev/antd';
+import { Edit, useForm, useSelect } from '@refinedev/antd';
 import { Form, Input, Select, InputNumber } from 'antd';
 import { IResourceComponentsProps } from '@refinedev/core';
 
@@ -7,6 +7,18 @@ const { Option } = Select;
 
 export const ServerEdit: React.FC<IResourceComponentsProps> = () => {
   const { formProps, saveButtonProps } = useForm();
+
+  const { selectProps: providerSelectProps } = useSelect({
+    resource: 'providers',
+    optionLabel: 'name',
+    optionValue: 'id',
+  });
+
+  const { selectProps: ownerSelectProps } = useSelect({
+    resource: 'people',
+    optionLabel: 'name',
+    optionValue: 'id',
+  });
 
   return (
     <Edit saveButtonProps={saveButtonProps}>
@@ -76,14 +88,10 @@ export const ServerEdit: React.FC<IResourceComponentsProps> = () => {
           </Select>
         </Form.Item>
         <Form.Item label="Provider" name="providerId">
-          <Select placeholder="Select a provider">
-            {/* Will be populated from API */}
-          </Select>
+          <Select {...providerSelectProps} placeholder="Select a provider" />
         </Form.Item>
         <Form.Item label="Owner" name="ownerId">
-          <Select placeholder="Select an owner">
-            {/* Will be populated from API */}
-          </Select>
+          <Select {...ownerSelectProps} placeholder="Select an owner" />
         </Form.Item>
         <Form.Item label="Location" name="location">
           <Input />

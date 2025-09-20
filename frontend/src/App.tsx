@@ -17,6 +17,9 @@ import { ConfigProvider } from 'antd';
 import '@refinedev/antd/dist/reset.css';
 
 import { ServerList, ServerShow, ServerEdit, ServerCreate } from './pages/servers';
+import { ProviderList, ProviderShow, ProviderEdit, ProviderCreate } from './pages/providers';
+import { PersonList, PersonShow, PersonEdit, PersonCreate } from './pages/people';
+import { CostSnapshotList, CostSnapshotShow, CostSnapshotEdit, CostSnapshotCreate } from './pages/cost-snapshots';
 
 function App() {
   return (
@@ -33,6 +36,36 @@ function App() {
               create: '/servers/create',
               edit: '/servers/edit/:id',
               show: '/servers/show/:id',
+              meta: {
+                canDelete: true,
+              },
+            },
+            {
+              name: 'providers',
+              list: '/providers',
+              create: '/providers/create',
+              edit: '/providers/edit/:id',
+              show: '/providers/show/:id',
+              meta: {
+                canDelete: true,
+              },
+            },
+            {
+              name: 'people',
+              list: '/people',
+              create: '/people/create',
+              edit: '/people/edit/:id',
+              show: '/people/show/:id',
+              meta: {
+                canDelete: true,
+              },
+            },
+            {
+              name: 'cost-snapshots',
+              list: '/cost-snapshots',
+              create: '/cost-snapshots/create',
+              edit: '/cost-snapshots/edit/:id',
+              show: '/cost-snapshots/show/:id',
               meta: {
                 canDelete: true,
               },
@@ -57,6 +90,24 @@ function App() {
                 <Route path="create" element={<ServerCreate />} />
                 <Route path="edit/:id" element={<ServerEdit />} />
                 <Route path="show/:id" element={<ServerShow />} />
+              </Route>
+              <Route path="/providers">
+                <Route index element={<ProviderList />} />
+                <Route path="create" element={<ProviderCreate />} />
+                <Route path="edit/:id" element={<ProviderEdit />} />
+                <Route path="show/:id" element={<ProviderShow />} />
+              </Route>
+              <Route path="/people">
+                <Route index element={<PersonList />} />
+                <Route path="create" element={<PersonCreate />} />
+                <Route path="edit/:id" element={<PersonEdit />} />
+                <Route path="show/:id" element={<PersonShow />} />
+              </Route>
+              <Route path="/cost-snapshots">
+                <Route index element={<CostSnapshotList />} />
+                <Route path="create" element={<CostSnapshotCreate />} />
+                <Route path="edit/:id" element={<CostSnapshotEdit />} />
+                <Route path="show/:id" element={<CostSnapshotShow />} />
               </Route>
               <Route path="*" element={<ErrorComponent />} />
             </Route>

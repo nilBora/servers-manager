@@ -6,4 +6,4 @@ backend/prisma/dev.db
 # Keep environment variables out of version control
 .env
 
-/generated/prisma
+/backend/generated/prisma
