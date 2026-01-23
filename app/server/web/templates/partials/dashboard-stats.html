@@ -1,0 +1,18 @@
+{{define "dashboard-stats"}}
+<div class="stat-card">
+    <div class="stat-value">{{.Stats.TotalServers}}</div>
+    <div class="stat-label">Total Servers</div>
+</div>
+<div class="stat-card stat-active">
+    <div class="stat-value">{{.Stats.ActiveServers}}</div>
+    <div class="stat-label">Active</div>
+</div>
+<div class="stat-card stat-paused">
+    <div class="stat-value">{{.Stats.PausedServers}}</div>
+    <div class="stat-label">Paused</div>
+</div>
+<div class="stat-card stat-cost">
+    <div class="stat-value">{{.Stats.TotalCost | formatCost}}</div>
+    <div class="stat-label">Monthly Cost</div>
+</div>
+{{end}}

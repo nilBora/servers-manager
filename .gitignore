@@ -7,3 +7,5 @@ backend/prisma/dev.db
 .env
 
 /backend/generated/prisma
+servers.db
+.db

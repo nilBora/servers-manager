@@ -1,0 +1,52 @@
+{{define "account-form"}}
+<div class="modal-header">
+    <h2>{{if .Account}}Edit Account{{else}}New Account{{end}}</h2>
+    <button class="modal-close" onclick="hideModal()">&times;</button>
+</div>
+<form {{if .Account}}hx-put="/web/accounts/{{.Account.ID}}"{{else}}hx-post="/web/accounts"{{end}}
+      hx-target="#accounts-table"
+      hx-swap="innerHTML"
+      hx-on::after-request="if(event.detail.successful) hideModal()">
+    <div class="modal-body">
+        <div class="form-group">
+            <label for="provider_id">Provider</label>
+            <select id="provider_id" name="provider_id" required>
+                <option value="">Select provider...</option>
+                {{range .Providers}}
+                <option value="{{.ID}}" {{if and $.Account (eq $.Account.ProviderID .ID)}}selected{{end}}>{{.Name}} ({{.Type.String}})</option>
+                {{end}}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" required
+                   value="{{if .Account}}{{.Account.Name}}{{end}}"
+                   placeholder="Account name">
+        </div>
+        <div class="form-group">
+            <label for="login">Login</label>
+            <input type="text" id="login" name="login"
+                   value="{{if .Account}}{{.Account.Login}}{{end}}"
+                   placeholder="Optional login/username">
+        </div>
+        <div class="form-group">
+            <label for="api_key">API Key</label>
+            <input type="password" id="api_key" name="api_key"
+                   value="{{if .Account}}{{.Account.ApiKey}}{{end}}"
+                   placeholder="Optional API key">
+        </div>
+        <div class="form-group">
+            <label for="account_type">Type</label>
+            <select id="account_type" name="account_type" required>
+                {{range .AccountTypes}}
+                <option value="{{.String}}" {{if and $.Account (eq $.Account.AccountType .)}}selected{{end}}>{{.String}}</option>
+                {{end}}
+            </select>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="hideModal()">Cancel</button>
+        <button type="submit" class="btn btn-primary">{{if .Account}}Save{{else}}Create{{end}}</button>
+    </div>
+</form>
+{{end}}

@@ -1,0 +1,41 @@
+{{define "provider-table"}}
+{{if .Providers}}
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Created</th>
+            <th class="actions-col">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{range .Providers}}
+        <tr>
+            <td class="name-cell">{{.Name}}</td>
+            <td><span class="provider-badge provider-{{.Type.String}}">{{.Type.String}}</span></td>
+            <td class="desc-cell">{{.Description}}</td>
+            <td class="date-cell">{{.CreatedAt | formatDate}}</td>
+            <td class="actions-cell">
+                <button class="btn btn-small btn-secondary"
+                        hx-get="/web/providers/{{.ID}}/edit"
+                        hx-target="#modal-content"
+                        hx-swap="innerHTML"
+                        onclick="showModal()">Edit</button>
+                <button class="btn btn-small btn-danger"
+                        onclick="confirmDelete('{{.Name}}', '/web/providers/{{.ID}}', '#providers-table')">Delete</button>
+            </td>
+        </tr>
+        {{end}}
+    </tbody>
+</table>
+{{else}}
+<div class="empty-state">
+    <p>No providers configured yet</p>
+    <button class="btn btn-primary" hx-get="/web/providers/new" hx-target="#modal-content" hx-swap="innerHTML" onclick="showModal()">
+        Add your first provider
+    </button>
+</div>
+{{end}}
+{{end}}
