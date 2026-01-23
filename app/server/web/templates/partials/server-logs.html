@@ -1,0 +1,31 @@
+{{define "server-logs"}}
+{{if .Logs}}
+<table class="data-table logs-table">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Server</th>
+            <th>IP</th>
+            <th>Action</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{range .Logs}}
+        <tr>
+            <td class="date-cell">{{.CreatedAt | formatTime}}</td>
+            <td class="name-cell">{{.ServerName}}</td>
+            <td class="ip-cell">{{if .ServerIP}}{{.ServerIP}}{{else}}-{{end}}</td>
+            <td><span class="action-badge {{.Action | actionClass}}">{{.Action.String}}</span></td>
+            <td class="desc-cell">{{.Description}}</td>
+        </tr>
+        {{end}}
+    </tbody>
+</table>
+{{else}}
+<div class="empty-state">
+    <p>No activity logs yet</p>
+    <p class="hint">Logs will appear when servers are added, updated, or deleted</p>
+</div>
+{{end}}
+{{end}}

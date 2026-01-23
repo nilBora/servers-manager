@@ -1,0 +1,36 @@
+{{define "provider-form"}}
+<div class="modal-header">
+    <h2>{{if .Provider}}Edit Provider{{else}}New Provider{{end}}</h2>
+    <button class="modal-close" onclick="hideModal()">&times;</button>
+</div>
+<form {{if .Provider}}hx-put="/web/providers/{{.Provider.ID}}"{{else}}hx-post="/web/providers"{{end}}
+      hx-target="#providers-table"
+      hx-swap="innerHTML"
+      hx-on::after-request="if(event.detail.successful) hideModal()">
+    <div class="modal-body">
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" required
+                   value="{{if .Provider}}{{.Provider.Name}}{{end}}"
+                   placeholder="Provider name">
+        </div>
+        <div class="form-group">
+            <label for="type">Type</label>
+            <select id="type" name="type" required>
+                {{range .ProviderTypes}}
+                <option value="{{.String}}" {{if and $.Provider (eq $.Provider.Type .)}}selected{{end}}>{{.String}}</option>
+                {{end}}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" name="description" rows="3"
+                      placeholder="Optional description">{{if .Provider}}{{.Provider.Description}}{{end}}</textarea>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="hideModal()">Cancel</button>
+        <button type="submit" class="btn btn-primary">{{if .Provider}}Save{{else}}Create{{end}}</button>
+    </div>
+</form>
+{{end}}

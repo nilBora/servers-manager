@@ -1,0 +1,25 @@
+{{define "nav"}}
+<nav class="navbar">
+    <div class="nav-brand">
+        <svg class="logo-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path fill="currentColor" d="M4 1h16a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1m0 8h16a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1m0 8h16a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1M9 5h1V3H9v2m0 8h1v-2H9v2m0 8h1v-2H9v2M5 3v2h2V3H5m0 8v2h2v-2H5m0 8v2h2v-2H5Z"/>
+        </svg>
+        <span>Servers Manager</span>
+    </div>
+    <div class="nav-links">
+        <a href="/" class="nav-link{{if eq .ActivePage "dashboard"}} active{{end}}">Dashboard</a>
+        <a href="/providers" class="nav-link{{if eq .ActivePage "providers"}} active{{end}}">Providers</a>
+        <a href="/accounts" class="nav-link{{if eq .ActivePage "accounts"}} active{{end}}">Accounts</a>
+        <a href="/servers" class="nav-link{{if eq .ActivePage "servers"}} active{{end}}">Servers</a>
+        <a href="/logs" class="nav-link{{if eq .ActivePage "logs"}} active{{end}}">Logs</a>
+    </div>
+    <div class="nav-actions">
+        <button class="btn-icon" hx-post="/web/theme" hx-swap="none" title="Toggle theme">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="5"/>
+                <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+            </svg>
+        </button>
+    </div>
+</nav>
+{{end}}

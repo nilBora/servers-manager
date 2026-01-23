@@ -1,0 +1,66 @@
+{{define "server-card"}}
+<div class="modal-header">
+    <h2>{{.Server.Name}}</h2>
+    <button class="modal-close" onclick="hideModal()">&times;</button>
+</div>
+<div class="modal-body server-view">
+    <div class="server-view-header">
+        {{template "status-badge" .Server.Status}}
+        <span class="provider-badge provider-{{.Server.ProviderType.String}}">{{.Server.ProviderName}}</span>
+        <span class="account-name">{{.Server.AccountName}}</span>
+    </div>
+
+    <div class="server-view-grid">
+        <div class="view-item">
+            <label>IP Address</label>
+            <span class="value ip-value">{{if .Server.IP}}{{.Server.IP}}{{else}}-{{end}}</span>
+        </div>
+        <div class="view-item">
+            <label>Type</label>
+            <span class="value"><span class="type-badge type-{{.Server.ServerType.String}}">{{.Server.ServerType.String}}</span></span>
+        </div>
+        <div class="view-item">
+            <label>Monthly Cost</label>
+            <span class="value cost-value">{{.Server.ApproximateCost | formatCost}}</span>
+        </div>
+        <div class="view-item">
+            <label>Responsible</label>
+            <span class="value">{{if .Server.Responsible}}{{.Server.Responsible}}{{else}}-{{end}}</span>
+        </div>
+    </div>
+
+    {{if .Server.Description}}
+    <div class="view-item full-width">
+        <label>Description</label>
+        <p class="description">{{.Server.Description}}</p>
+    </div>
+    {{end}}
+
+    <div class="view-item full-width">
+        <label>Created</label>
+        <span class="value">{{.Server.CreatedAt | formatTime}}</span>
+    </div>
+
+    {{if .Logs}}
+    <div class="server-logs">
+        <h4>Recent Activity</h4>
+        <ul class="log-list">
+            {{range .Logs}}
+            <li class="log-item">
+                <span class="log-action {{.Action | actionClass}}">{{.Action.String}}</span>
+                <span class="log-desc">{{.Description}}</span>
+                <span class="log-time">{{.CreatedAt | formatTime}}</span>
+            </li>
+            {{end}}
+        </ul>
+    </div>
+    {{end}}
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" onclick="hideModal()">Close</button>
+    <button class="btn btn-primary"
+            hx-get="/web/servers/{{.Server.ID}}/edit"
+            hx-target="#modal-content"
+            hx-swap="innerHTML">Edit</button>
+</div>
+{{end}}

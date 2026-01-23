@@ -1,0 +1,41 @@
+{{define "dashboard-accounts"}}
+{{if .Groups}}
+{{range .Groups}}
+<div class="account-group">
+    <div class="account-header">
+        <div class="account-info">
+            <span class="provider-badge provider-{{.ProviderType.String}}">{{.ProviderName}}</span>
+            <h3>{{.AccountName}}</h3>
+            <span class="account-type">{{.AccountType.String}}</span>
+        </div>
+        <div class="account-meta">
+            <span class="server-count">{{len .Servers}} servers</span>
+            <span class="account-cost">{{.TotalCost | formatCost}}/mo</span>
+        </div>
+    </div>
+    <div class="servers-grid">
+        {{range .Servers}}
+        <div class="server-card" hx-get="/web/servers/{{.ID}}/view" hx-target="#modal-content" hx-swap="innerHTML" onclick="showModal()">
+            <div class="server-header">
+                <span class="server-name">{{.Name}}</span>
+                {{template "status-badge" .Status}}
+            </div>
+            <div class="server-details">
+                <div class="server-ip">{{if .IP}}{{.IP}}{{else}}-{{end}}</div>
+                <div class="server-cost">{{.ApproximateCost | formatCost}}</div>
+            </div>
+            {{if .Responsible}}
+            <div class="server-responsible">{{.Responsible}}</div>
+            {{end}}
+        </div>
+        {{end}}
+    </div>
+</div>
+{{end}}
+{{else}}
+<div class="empty-state">
+    <p>No servers found</p>
+    <a href="/servers" class="btn btn-primary">Add Server</a>
+</div>
+{{end}}
+{{end}}

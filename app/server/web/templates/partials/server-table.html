@@ -1,0 +1,68 @@
+{{define "server-table"}}
+{{if .Servers}}
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Account</th>
+            <th>IP</th>
+            <th>Status</th>
+            <th>Type</th>
+            <th>Cost</th>
+            <th>Responsible</th>
+            <th class="actions-col">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{range .Servers}}
+        <tr class="clickable-row" hx-get="/web/servers/{{.ID}}/view" hx-target="#modal-content" hx-swap="innerHTML" hx-trigger="click target:td:not(.actions-cell)" onclick="showModal()">
+            <td class="name-cell">{{.Name}}</td>
+            <td>
+                <span class="provider-badge provider-{{.ProviderType.String}}">{{.ProviderName}}</span>
+                <span class="account-name">{{.AccountName}}</span>
+            </td>
+            <td class="ip-cell">{{if .IP}}{{.IP}}{{else}}-{{end}}</td>
+            <td>{{template "status-badge" .Status}}</td>
+            <td><span class="type-badge type-{{.ServerType.String}}">{{.ServerType.String}}</span></td>
+            <td class="cost-cell">{{.ApproximateCost | formatCost}}</td>
+            <td>{{if .Responsible}}{{.Responsible}}{{else}}-{{end}}</td>
+            <td class="actions-cell">
+                <button class="btn btn-small btn-secondary"
+                        hx-get="/web/servers/{{.ID}}/edit"
+                        hx-target="#modal-content"
+                        hx-swap="innerHTML"
+                        onclick="event.stopPropagation(); showModal()">Edit</button>
+                <div class="status-dropdown">
+                    <button class="btn btn-small btn-outline" onclick="event.stopPropagation(); toggleStatusMenu(this)">Status</button>
+                    <div class="dropdown-menu">
+                        {{range $.Statuses}}
+                        <button class="dropdown-item"
+                                hx-put="/web/servers/{{$.ID}}/status"
+                                hx-vals='{"status": "{{.String}}"}'
+                                hx-target="#servers-table"
+                                hx-swap="innerHTML"
+                                onclick="event.stopPropagation()">{{.String}}</button>
+                        {{end}}
+                    </div>
+                </div>
+                <button class="btn btn-small btn-danger"
+                        onclick="event.stopPropagation(); confirmDelete('{{.Name}}', '/web/servers/{{.ID}}', '#servers-table')">Delete</button>
+            </td>
+        </tr>
+        {{end}}
+    </tbody>
+</table>
+{{else}}
+<div class="empty-state">
+    <p>No servers added yet</p>
+    {{if .Accounts}}
+    <button class="btn btn-primary" hx-get="/web/servers/new" hx-target="#modal-content" hx-swap="innerHTML" onclick="showModal()">
+        Add your first server
+    </button>
+    {{else}}
+    <p class="hint">Add an account first</p>
+    <a href="/accounts" class="btn btn-primary">Go to Accounts</a>
+    {{end}}
+</div>
+{{end}}
+{{end}}
