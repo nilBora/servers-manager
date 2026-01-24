@@ -19,12 +19,12 @@ func (s *DB) CreateServer(ctx context.Context, srv *Server) error {
 	srv.CreatedAt = now
 	srv.UpdatedAt = now
 
-	query := `INSERT INTO servers (account_id, name, ip, description, responsible,
+	query := `INSERT INTO servers (account_id, name, ip, location, description, responsible,
 		approximate_cost, status, created_at, updated_at)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
 
-	result, err := s.db.ExecContext(ctx, query, srv.AccountID, srv.Name, srv.IP, srv.Description,
-		srv.Responsible, srv.ApproximateCost, srv.Status.String(),
+	result, err := s.db.ExecContext(ctx, query, srv.AccountID, srv.Name, srv.IP, srv.Location,
+		srv.Description, srv.Responsible, srv.ApproximateCost, srv.Status.String(),
 		srv.CreatedAt, srv.UpdatedAt)
 	if err != nil {
 		return fmt.Errorf("failed to create server: %w", err)
@@ -45,7 +45,7 @@ func (s *DB) GetServer(ctx context.Context, id int64) (*Server, error) {
 	defer s.mu.RUnlock()
 
 	var r serverRow
-	query := `SELECT id, account_id, name, ip, description, responsible,
+	query := `SELECT id, account_id, name, ip, location, description, responsible,
 		approximate_cost, status, created_at, updated_at
 		FROM servers WHERE id = ?`
 	if err := s.db.GetContext(ctx, &r, query, id); err != nil {
@@ -64,9 +64,9 @@ func (s *DB) GetServerWithAccount(ctx context.Context, id int64) (*ServerWithAcc
 	defer s.mu.RUnlock()
 
 	var r serverWithAccountRow
-	query := `SELECT s.id, s.account_id, s.name, s.ip, s.description, s.responsible,
+	query := `SELECT s.id, s.account_id, s.name, s.ip, s.location, s.description, s.responsible,
 		s.approximate_cost, s.status, s.created_at, s.updated_at,
-		a.name as account_name, a.provider_id,
+		a.name as account_name, a.group_name as account_group_name, a.provider_id,
 		p.name as provider_name
 		FROM servers s
 		JOIN accounts a ON s.account_id = a.id
@@ -88,7 +88,7 @@ func (s *DB) ListServers(ctx context.Context) ([]Server, error) {
 	defer s.mu.RUnlock()
 
 	var rows []serverRow
-	query := `SELECT id, account_id, name, ip, description, responsible,
+	query := `SELECT id, account_id, name, ip, location, description, responsible,
 		approximate_cost, status, created_at, updated_at
 		FROM servers ORDER BY name`
 	if err := s.db.SelectContext(ctx, &rows, query); err != nil {
@@ -113,14 +113,14 @@ func (s *DB) ListServersWithAccounts(ctx context.Context) ([]ServerWithAccount, 
 	defer s.mu.RUnlock()
 
 	var rows []serverWithAccountRow
-	query := `SELECT s.id, s.account_id, s.name, s.ip, s.description, s.responsible,
+	query := `SELECT s.id, s.account_id, s.name, s.ip, s.location, s.description, s.responsible,
 		s.approximate_cost, s.status, s.created_at, s.updated_at,
-		a.name as account_name, a.provider_id,
+		a.name as account_name, a.group_name as account_group_name, a.provider_id,
 		p.name as provider_name
 		FROM servers s
 		JOIN accounts a ON s.account_id = a.id
 		JOIN providers p ON a.provider_id = p.id
-		ORDER BY p.name, a.name, s.name`
+		ORDER BY p.name, a.group_name, a.name, s.name`
 	if err := s.db.SelectContext(ctx, &rows, query); err != nil {
 		return nil, fmt.Errorf("failed to list servers: %w", err)
 	}
@@ -143,7 +143,7 @@ func (s *DB) ListServersByAccount(ctx context.Context, accountID int64) ([]Serve
 	defer s.mu.RUnlock()
 
 	var rows []serverRow
-	query := `SELECT id, account_id, name, ip, description, responsible,
+	query := `SELECT id, account_id, name, ip, location, description, responsible,
 		approximate_cost, status, created_at, updated_at
 		FROM servers WHERE account_id = ? ORDER BY name`
 	if err := s.db.SelectContext(ctx, &rows, query, accountID); err != nil {
@@ -168,15 +168,15 @@ func (s *DB) ListServersByStatus(ctx context.Context, status enum.ServerStatus) 
 	defer s.mu.RUnlock()
 
 	var rows []serverWithAccountRow
-	query := `SELECT s.id, s.account_id, s.name, s.ip, s.description, s.responsible,
+	query := `SELECT s.id, s.account_id, s.name, s.ip, s.location, s.description, s.responsible,
 		s.approximate_cost, s.status, s.created_at, s.updated_at,
-		a.name as account_name, a.provider_id,
+		a.name as account_name, a.group_name as account_group_name, a.provider_id,
 		p.name as provider_name
 		FROM servers s
 		JOIN accounts a ON s.account_id = a.id
 		JOIN providers p ON a.provider_id = p.id
 		WHERE s.status = ?
-		ORDER BY p.name, a.name, s.name`
+		ORDER BY p.name, a.group_name, a.name, s.name`
 	if err := s.db.SelectContext(ctx, &rows, query, status.String()); err != nil {
 		return nil, fmt.Errorf("failed to list servers: %w", err)
 	}
@@ -200,11 +200,11 @@ func (s *DB) UpdateServer(ctx context.Context, srv *Server) error {
 
 	srv.UpdatedAt = time.Now().UTC()
 
-	query := `UPDATE servers SET account_id = ?, name = ?, ip = ?, description = ?,
+	query := `UPDATE servers SET account_id = ?, name = ?, ip = ?, location = ?, description = ?,
 		responsible = ?, approximate_cost = ?, status = ?, updated_at = ?
 		WHERE id = ?`
-	result, err := s.db.ExecContext(ctx, query, srv.AccountID, srv.Name, srv.IP, srv.Description,
-		srv.Responsible, srv.ApproximateCost, srv.Status.String(),
+	result, err := s.db.ExecContext(ctx, query, srv.AccountID, srv.Name, srv.IP, srv.Location,
+		srv.Description, srv.Responsible, srv.ApproximateCost, srv.Status.String(),
 		srv.UpdatedAt, srv.ID)
 	if err != nil {
 		return fmt.Errorf("failed to update server: %w", err)
@@ -243,6 +243,25 @@ func (s *DB) UpdateServerStatus(ctx context.Context, id int64, status enum.Serve
 	}
 
 	return nil
+}
+
+// FindServerByNameAndAccount finds a server by name and account ID
+func (s *DB) FindServerByNameAndAccount(ctx context.Context, name string, accountID int64) (*Server, error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+
+	var r serverRow
+	query := `SELECT id, account_id, name, ip, location, description, responsible,
+		approximate_cost, status, created_at, updated_at
+		FROM servers WHERE name = ? AND account_id = ?`
+	if err := s.db.GetContext(ctx, &r, query, name, accountID); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrNotFound
+		}
+		return nil, fmt.Errorf("failed to find server: %w", err)
+	}
+
+	return r.toServer()
 }
 
 // DeleteServer deletes a server by ID
@@ -292,9 +311,9 @@ func (s *DB) GetServersGroupedByAccount(ctx context.Context, status *enum.Server
 	defer s.mu.RUnlock()
 
 	// build query with optional status filter
-	query := `SELECT s.id, s.account_id, s.name, s.ip, s.description, s.responsible,
+	query := `SELECT s.id, s.account_id, s.name, s.ip, s.location, s.description, s.responsible,
 		s.approximate_cost, s.status, s.created_at, s.updated_at,
-		a.name as account_name, a.provider_id,
+		a.name as account_name, a.group_name as account_group_name, a.provider_id,
 		p.name as provider_name
 		FROM servers s
 		JOIN accounts a ON s.account_id = a.id
@@ -305,7 +324,7 @@ func (s *DB) GetServersGroupedByAccount(ctx context.Context, status *enum.Server
 		query += ` WHERE s.status = ?`
 		args = append(args, status.String())
 	}
-	query += ` ORDER BY p.name, a.name, s.name`
+	query += ` ORDER BY p.name, a.group_name, a.name, s.name`
 
 	var rows []serverWithAccountRow
 	if err := s.db.SelectContext(ctx, &rows, query, args...); err != nil {
@@ -325,11 +344,12 @@ func (s *DB) GetServersGroupedByAccount(ctx context.Context, status *enum.Server
 		group, exists := groupMap[srv.AccountID]
 		if !exists {
 			group = &AccountGroup{
-				AccountID:    srv.AccountID,
-				AccountName:  srv.AccountName,
-				ProviderID:   srv.ProviderID,
-				ProviderName: srv.ProviderName,
-				Servers:      make([]ServerWithAccount, 0),
+				AccountID:        srv.AccountID,
+				AccountName:      srv.AccountName,
+				AccountGroupName: srv.AccountGroupName,
+				ProviderID:       srv.ProviderID,
+				ProviderName:     srv.ProviderName,
+				Servers:          make([]ServerWithAccount, 0),
 			}
 			groupMap[srv.AccountID] = group
 			groups = append(groups, *group)
@@ -350,12 +370,112 @@ func (s *DB) GetServersGroupedByAccount(ctx context.Context, status *enum.Server
 	return groups, nil
 }
 
+// GetServersGroupedHierarchically returns servers in hierarchical structure:
+// Provider+GroupName -> Accounts (Projects) -> Servers
+func (s *DB) GetServersGroupedHierarchically(ctx context.Context, status *enum.ServerStatus) ([]ProviderAccountGroup, error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+
+	// build query with optional status filter
+	query := `SELECT s.id, s.account_id, s.name, s.ip, s.location, s.description, s.responsible,
+		s.approximate_cost, s.status, s.created_at, s.updated_at,
+		a.name as account_name, a.group_name as account_group_name, a.provider_id,
+		p.name as provider_name
+		FROM servers s
+		JOIN accounts a ON s.account_id = a.id
+		JOIN providers p ON a.provider_id = p.id`
+
+	var args []interface{}
+	if status != nil {
+		query += ` WHERE s.status = ?`
+		args = append(args, status.String())
+	}
+	query += ` ORDER BY p.name, a.group_name, a.name, s.name`
+
+	var rows []serverWithAccountRow
+	if err := s.db.SelectContext(ctx, &rows, query, args...); err != nil {
+		return nil, fmt.Errorf("failed to get servers grouped: %w", err)
+	}
+
+	// Build hierarchical structure: ProviderAccountGroup -> AccountGroup -> Servers
+	providerGroupMap := make(map[string]*ProviderAccountGroup) // key: "provider_id:group_name"
+	accountGroupMap := make(map[int64]*AccountGroup)           // key: account_id
+	var providerGroups []ProviderAccountGroup
+
+	for _, r := range rows {
+		srv, err := r.toServerWithAccount()
+		if err != nil {
+			return nil, err
+		}
+
+		// Create group key from provider_id and group_name
+		groupKey := fmt.Sprintf("%d:%s", srv.ProviderID, srv.AccountGroupName)
+
+		// Find or create ProviderAccountGroup
+		providerGroup, exists := providerGroupMap[groupKey]
+		if !exists {
+			providerGroup = &ProviderAccountGroup{
+				ProviderID:   srv.ProviderID,
+				ProviderName: srv.ProviderName,
+				GroupName:    srv.AccountGroupName,
+				GroupKey:     groupKey,
+				Accounts:     make([]AccountGroup, 0),
+			}
+			providerGroupMap[groupKey] = providerGroup
+			providerGroups = append(providerGroups, *providerGroup)
+		}
+
+		// Find or create AccountGroup within ProviderAccountGroup
+		accountGroup, exists := accountGroupMap[srv.AccountID]
+		if !exists {
+			accountGroup = &AccountGroup{
+				AccountID:        srv.AccountID,
+				AccountName:      srv.AccountName,
+				AccountGroupName: srv.AccountGroupName,
+				ProviderID:       srv.ProviderID,
+				ProviderName:     srv.ProviderName,
+				Servers:          make([]ServerWithAccount, 0),
+			}
+			accountGroupMap[srv.AccountID] = accountGroup
+
+			// Add to the appropriate ProviderAccountGroup
+			for i := range providerGroups {
+				if providerGroups[i].GroupKey == groupKey {
+					providerGroups[i].Accounts = append(providerGroups[i].Accounts, *accountGroup)
+					break
+				}
+			}
+		}
+
+		// Add server to account group (find it in providerGroups slice)
+		for i := range providerGroups {
+			if providerGroups[i].GroupKey == groupKey {
+				for j := range providerGroups[i].Accounts {
+					if providerGroups[i].Accounts[j].AccountID == srv.AccountID {
+						providerGroups[i].Accounts[j].Servers = append(providerGroups[i].Accounts[j].Servers, *srv)
+						if srv.Status != enum.ServerStatusDeleted {
+							providerGroups[i].Accounts[j].TotalCost += srv.ApproximateCost
+							providerGroups[i].TotalCost += srv.ApproximateCost
+						}
+						providerGroups[i].ServerCount++
+						break
+					}
+				}
+				break
+			}
+		}
+	}
+
+	return providerGroups, nil
+}
+
 // serverRow is used for scanning database rows
 type serverRow struct {
 	ID              int64     `db:"id"`
 	AccountID       int64     `db:"account_id"`
 	Name            string    `db:"name"`
 	IP              string    `db:"ip"`
+	Location        string    `db:"location"`
 	Description     string    `db:"description"`
 	Responsible     string    `db:"responsible"`
 	ApproximateCost float64   `db:"approximate_cost"`
@@ -374,6 +494,7 @@ func (r *serverRow) toServer() (*Server, error) {
 		AccountID:       r.AccountID,
 		Name:            r.Name,
 		IP:              r.IP,
+		Location:        r.Location,
 		Description:     r.Description,
 		Responsible:     r.Responsible,
 		ApproximateCost: r.ApproximateCost,
@@ -385,9 +506,10 @@ func (r *serverRow) toServer() (*Server, error) {
 
 type serverWithAccountRow struct {
 	serverRow
-	AccountName  string `db:"account_name"`
-	ProviderID   int64  `db:"provider_id"`
-	ProviderName string `db:"provider_name"`
+	AccountName      string `db:"account_name"`
+	AccountGroupName string `db:"account_group_name"`
+	ProviderID       int64  `db:"provider_id"`
+	ProviderName     string `db:"provider_name"`
 }
 
 func (r *serverWithAccountRow) toServerWithAccount() (*ServerWithAccount, error) {
@@ -396,9 +518,10 @@ func (r *serverWithAccountRow) toServerWithAccount() (*ServerWithAccount, error)
 		return nil, err
 	}
 	return &ServerWithAccount{
-		Server:       *srv,
-		AccountName:  r.AccountName,
-		ProviderID:   r.ProviderID,
-		ProviderName: r.ProviderName,
+		Server:           *srv,
+		AccountName:      r.AccountName,
+		AccountGroupName: r.AccountGroupName,
+		ProviderID:       r.ProviderID,
+		ProviderName:     r.ProviderName,
 	}, nil
 }

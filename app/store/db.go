@@ -29,6 +29,11 @@ func New(dbPath string) (*DB, error) {
 		return nil, fmt.Errorf("failed to create schema: %w", err)
 	}
 
+	if err := store.runMigrations(); err != nil {
+		_ = db.Close()
+		return nil, fmt.Errorf("failed to run migrations: %w", err)
+	}
+
 	if err := store.seedDefaultProviders(); err != nil {
 		_ = db.Close()
 		return nil, fmt.Errorf("failed to seed providers: %w", err)
@@ -82,6 +87,7 @@ func (s *DB) createSchema() error {
 		CREATE TABLE IF NOT EXISTS accounts (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			provider_id INTEGER NOT NULL REFERENCES providers(id),
+			group_name TEXT DEFAULT '',
 			name TEXT NOT NULL,
 			login TEXT,
 			api_key TEXT,
@@ -96,6 +102,7 @@ func (s *DB) createSchema() error {
 			account_id INTEGER NOT NULL REFERENCES accounts(id),
 			name TEXT NOT NULL,
 			ip TEXT,
+			location TEXT DEFAULT '',
 			description TEXT,
 			responsible TEXT,
 			approximate_cost REAL DEFAULT 0,
@@ -124,6 +131,38 @@ func (s *DB) createSchema() error {
 	if _, err := s.db.Exec(schema); err != nil {
 		return fmt.Errorf("failed to create schema: %w", err)
 	}
+	return nil
+}
+
+// runMigrations runs database migrations for schema updates
+func (s *DB) runMigrations() error {
+	// Migration: Add group_name column to accounts if it doesn't exist
+	var count int
+	err := s.db.Get(&count, `SELECT COUNT(*) FROM pragma_table_info('accounts') WHERE name='group_name'`)
+	if err != nil {
+		return fmt.Errorf("failed to check accounts schema: %w", err)
+	}
+	if count == 0 {
+		_, err := s.db.Exec(`ALTER TABLE accounts ADD COLUMN group_name TEXT DEFAULT ''`)
+		if err != nil {
+			return fmt.Errorf("failed to add group_name column: %w", err)
+		}
+		log.Printf("[INFO] migration: added group_name column to accounts")
+	}
+
+	// Migration: Add location column to servers if it doesn't exist
+	err = s.db.Get(&count, `SELECT COUNT(*) FROM pragma_table_info('servers') WHERE name='location'`)
+	if err != nil {
+		return fmt.Errorf("failed to check servers schema: %w", err)
+	}
+	if count == 0 {
+		_, err := s.db.Exec(`ALTER TABLE servers ADD COLUMN location TEXT DEFAULT ''`)
+		if err != nil {
+			return fmt.Errorf("failed to add location column: %w", err)
+		}
+		log.Printf("[INFO] migration: added location column to servers")
+	}
+
 	return nil
 }
 

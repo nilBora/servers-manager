@@ -6,6 +6,7 @@
             <th>Name</th>
             <th>Account</th>
             <th>IP</th>
+            <th>Location</th>
             <th>Status</th>
             <th>Cost</th>
             <th>Responsible</th>
@@ -21,6 +22,7 @@
                 <span class="account-name">{{$server.AccountName}}</span>
             </td>
             <td class="ip-cell">{{if $server.IP}}{{$server.IP}}{{else}}-{{end}}</td>
+            <td class="location-cell">{{if $server.Location}}{{$server.Location}}{{else}}-{{end}}</td>
             <td>{{template "status-badge" $server.Status}}</td>
             <td class="cost-cell">{{$server.ApproximateCost | formatCost}}</td>
             <td>{{if $server.Responsible}}{{$server.Responsible}}{{else}}-{{end}}</td>

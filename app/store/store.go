@@ -33,6 +33,7 @@ type ServerStore interface {
 	CreateServer(ctx context.Context, s *Server) error
 	GetServer(ctx context.Context, id int64) (*Server, error)
 	GetServerWithAccount(ctx context.Context, id int64) (*ServerWithAccount, error)
+	FindServerByNameAndAccount(ctx context.Context, name string, accountID int64) (*Server, error)
 	ListServers(ctx context.Context) ([]Server, error)
 	ListServersWithAccounts(ctx context.Context) ([]ServerWithAccount, error)
 	ListServersByAccount(ctx context.Context, accountID int64) ([]Server, error)
@@ -42,6 +43,7 @@ type ServerStore interface {
 	DeleteServer(ctx context.Context, id int64) error
 	GetDashboardStats(ctx context.Context) (*DashboardStats, error)
 	GetServersGroupedByAccount(ctx context.Context, status *enum.ServerStatus) ([]AccountGroup, error)
+	GetServersGroupedHierarchically(ctx context.Context, status *enum.ServerStatus) ([]ProviderAccountGroup, error)
 }
 
 // ServerLogStore defines operations for server logs

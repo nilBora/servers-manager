@@ -91,6 +91,7 @@ func (h *Handler) handleAccountCreate(w http.ResponseWriter, r *http.Request) {
 
 	account := &store.Account{
 		ProviderID: providerID,
+		GroupName:  r.FormValue("group_name"),
 		Name:       r.FormValue("name"),
 		Login:      r.FormValue("login"),
 		ApiKey:     r.FormValue("api_key"),
@@ -136,6 +137,7 @@ func (h *Handler) handleAccountUpdate(w http.ResponseWriter, r *http.Request) {
 	account := &store.Account{
 		ID:         id,
 		ProviderID: providerID,
+		GroupName:  r.FormValue("group_name"),
 		Name:       r.FormValue("name"),
 		Login:      r.FormValue("login"),
 		ApiKey:     r.FormValue("api_key"),

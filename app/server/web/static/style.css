@@ -278,6 +278,14 @@ body {
     font-weight: 600;
 }
 
+.account-group-name {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    padding: 0.125rem 0.375rem;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius);
+}
+
 .account-type {
     font-size: 0.75rem;
     color: var(--text-muted);
@@ -633,6 +641,23 @@ body {
     gap: 1rem;
 }
 
+.form-hint {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+}
+
+.group-cell {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.location-cell {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
 select.status-filter,
 select.action-filter {
     padding: 0.5rem 0.75rem;
@@ -763,6 +788,114 @@ select.action-filter {
     padding: 0.75rem 1rem;
     border-radius: var(--radius);
     font-size: 0.875rem;
+}
+
+/* HTMX Indicators */
+.htmx-indicator {
+    display: none;
+}
+
+.htmx-request .htmx-indicator {
+    display: inline-block;
+}
+
+.htmx-request.htmx-indicator {
+    display: inline-block;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.htmx-indicator {
+    animation: spin 1s linear infinite;
+    margin-right: 0.25rem;
+}
+
+/* Sync button styles */
+.btn.htmx-request {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+/* Provider Groups (Hierarchical Dashboard) */
+.provider-group {
+    background: var(--bg-primary);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    margin-bottom: 1.5rem;
+}
+
+.provider-group-header {
+    padding: 1rem 1.5rem;
+    background: var(--bg-tertiary);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.provider-group-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.provider-badge.large {
+    font-size: 0.875rem;
+    padding: 0.375rem 0.75rem;
+}
+
+.group-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.provider-group-meta {
+    display: flex;
+    gap: 1.5rem;
+    font-size: 0.875rem;
+}
+
+.group-cost {
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.accounts-container {
+    padding: 0.5rem;
+}
+
+.accounts-container .account-group {
+    margin: 0.5rem;
+    background: var(--bg-secondary);
+    border-radius: var(--radius);
+    box-shadow: none;
+}
+
+.accounts-container .account-header {
+    background: transparent;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.accounts-container .account-header h4 {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.accounts-container .account-meta {
+    font-size: 0.8125rem;
+}
+
+.server-location {
+    font-size: 0.75rem;
+    color: var(--text-muted);
 }
 
 /* Responsive */

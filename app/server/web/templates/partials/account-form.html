@@ -18,16 +18,17 @@
             </select>
         </div>
         <div class="form-group">
+            <label for="group_name">Account Group</label>
+            <input type="text" id="group_name" name="group_name"
+                   value="{{if .Account}}{{.Account.GroupName}}{{end}}"
+                   placeholder="e.g. Main Account (user@example.com)">
+            <small class="form-hint">Group related projects/credentials together</small>
+        </div>
+        <div class="form-group">
             <label for="name">Name</label>
             <input type="text" id="name" name="name" required
                    value="{{if .Account}}{{.Account.Name}}{{end}}"
-                   placeholder="Account name">
-        </div>
-        <div class="form-group">
-            <label for="login">Login</label>
-            <input type="text" id="login" name="login"
-                   value="{{if .Account}}{{.Account.Login}}{{end}}"
-                   placeholder="Optional login/username">
+                   placeholder="e.g. Cloud Production, Robot Dedicated">
         </div>
         <div class="form-group">
             <label for="api_key">API Key</label>

@@ -17,10 +17,10 @@ func (s *DB) CreateAccount(ctx context.Context, a *Account) error {
 	a.CreatedAt = now
 	a.UpdatedAt = now
 
-	query := `INSERT INTO accounts (provider_id, name, login, api_key, created_at, updated_at)
-		VALUES (?, ?, ?, ?, ?, ?)`
+	query := `INSERT INTO accounts (provider_id, group_name, name, login, api_key, created_at, updated_at)
+		VALUES (?, ?, ?, ?, ?, ?, ?)`
 
-	result, err := s.db.ExecContext(ctx, query, a.ProviderID, a.Name, a.Login, a.ApiKey,
+	result, err := s.db.ExecContext(ctx, query, a.ProviderID, a.GroupName, a.Name, a.Login, a.ApiKey,
 		a.CreatedAt, a.UpdatedAt)
 	if err != nil {
 		if isUniqueViolation(err) {
@@ -44,7 +44,7 @@ func (s *DB) GetAccount(ctx context.Context, id int64) (*Account, error) {
 	defer s.mu.RUnlock()
 
 	var a Account
-	query := `SELECT id, provider_id, name, login, api_key, created_at, updated_at
+	query := `SELECT id, provider_id, group_name, name, login, api_key, created_at, updated_at
 		FROM accounts WHERE id = ?`
 	if err := s.db.GetContext(ctx, &a, query, id); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -62,7 +62,7 @@ func (s *DB) GetAccountWithProvider(ctx context.Context, id int64) (*AccountWith
 	defer s.mu.RUnlock()
 
 	var a AccountWithProvider
-	query := `SELECT a.id, a.provider_id, a.name, a.login, a.api_key,
+	query := `SELECT a.id, a.provider_id, a.group_name, a.name, a.login, a.api_key,
 		a.created_at, a.updated_at,
 		p.name as provider_name,
 		(SELECT COUNT(*) FROM servers WHERE account_id = a.id) as server_count
@@ -85,8 +85,8 @@ func (s *DB) ListAccounts(ctx context.Context) ([]Account, error) {
 	defer s.mu.RUnlock()
 
 	var accounts []Account
-	query := `SELECT id, provider_id, name, login, api_key, created_at, updated_at
-		FROM accounts ORDER BY name`
+	query := `SELECT id, provider_id, group_name, name, login, api_key, created_at, updated_at
+		FROM accounts ORDER BY group_name, name`
 	if err := s.db.SelectContext(ctx, &accounts, query); err != nil {
 		return nil, fmt.Errorf("failed to list accounts: %w", err)
 	}
@@ -100,13 +100,13 @@ func (s *DB) ListAccountsWithProviders(ctx context.Context) ([]AccountWithProvid
 	defer s.mu.RUnlock()
 
 	var accounts []AccountWithProvider
-	query := `SELECT a.id, a.provider_id, a.name, a.login, a.api_key,
+	query := `SELECT a.id, a.provider_id, a.group_name, a.name, a.login, a.api_key,
 		a.created_at, a.updated_at,
 		p.name as provider_name,
 		(SELECT COUNT(*) FROM servers WHERE account_id = a.id) as server_count
 		FROM accounts a
 		JOIN providers p ON a.provider_id = p.id
-		ORDER BY p.name, a.name`
+		ORDER BY p.name, a.group_name, a.name`
 	if err := s.db.SelectContext(ctx, &accounts, query); err != nil {
 		return nil, fmt.Errorf("failed to list accounts: %w", err)
 	}
@@ -120,8 +120,8 @@ func (s *DB) ListAccountsByProvider(ctx context.Context, providerID int64) ([]Ac
 	defer s.mu.RUnlock()
 
 	var accounts []Account
-	query := `SELECT id, provider_id, name, login, api_key, created_at, updated_at
-		FROM accounts WHERE provider_id = ? ORDER BY name`
+	query := `SELECT id, provider_id, group_name, name, login, api_key, created_at, updated_at
+		FROM accounts WHERE provider_id = ? ORDER BY group_name, name`
 	if err := s.db.SelectContext(ctx, &accounts, query, providerID); err != nil {
 		return nil, fmt.Errorf("failed to list accounts: %w", err)
 	}
@@ -136,9 +136,9 @@ func (s *DB) UpdateAccount(ctx context.Context, a *Account) error {
 
 	a.UpdatedAt = time.Now().UTC()
 
-	query := `UPDATE accounts SET provider_id = ?, name = ?, login = ?, api_key = ?,
+	query := `UPDATE accounts SET provider_id = ?, group_name = ?, name = ?, login = ?, api_key = ?,
 		updated_at = ? WHERE id = ?`
-	result, err := s.db.ExecContext(ctx, query, a.ProviderID, a.Name, a.Login, a.ApiKey,
+	result, err := s.db.ExecContext(ctx, query, a.ProviderID, a.GroupName, a.Name, a.Login, a.ApiKey,
 		a.UpdatedAt, a.ID)
 	if err != nil {
 		if isUniqueViolation(err) {

@@ -16,6 +16,10 @@
             <span class="value ip-value">{{if .Server.IP}}{{.Server.IP}}{{else}}-{{end}}</span>
         </div>
         <div class="view-item">
+            <label>Location</label>
+            <span class="value">{{if .Server.Location}}{{.Server.Location}}{{else}}-{{end}}</span>
+        </div>
+        <div class="view-item">
             <label>Monthly Cost</label>
             <span class="value cost-value">{{.Server.ApproximateCost | formatCost}}</span>
         </div>

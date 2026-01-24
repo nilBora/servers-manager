@@ -31,6 +31,12 @@
                        placeholder="192.168.1.1">
             </div>
         </div>
+        <div class="form-group">
+            <label for="location">Location</label>
+            <input type="text" id="location" name="location"
+                   value="{{if .Server}}{{.Server.Location}}{{end}}"
+                   placeholder="e.g. Nuremberg, DE or us-east-1">
+        </div>
         <div class="form-row">
             <div class="form-group">
                 <label for="status">Status</label>
