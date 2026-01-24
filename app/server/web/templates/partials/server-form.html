@@ -8,24 +8,14 @@
       hx-swap="innerHTML"
       hx-on::after-request="if(event.detail.successful) { hideModal(); htmx.trigger(document.body, 'serverUpdated'); }">
     <div class="modal-body">
-        <div class="form-row">
-            <div class="form-group">
-                <label for="account_id">Account</label>
-                <select id="account_id" name="account_id" required>
-                    <option value="">Select account...</option>
-                    {{range .Accounts}}
-                    <option value="{{.ID}}" {{if and $.Server (eq $.Server.AccountID .ID)}}selected{{end}}>{{.ProviderName}} / {{.Name}}</option>
-                    {{end}}
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="server_type">Type</label>
-                <select id="server_type" name="server_type" required>
-                    {{range .ServerTypes}}
-                    <option value="{{.String}}" {{if and $.Server (eq $.Server.ServerType .)}}selected{{end}}>{{.String}}</option>
-                    {{end}}
-                </select>
-            </div>
+        <div class="form-group">
+            <label for="account_id">Account</label>
+            <select id="account_id" name="account_id" required>
+                <option value="">Select account...</option>
+                {{range .Accounts}}
+                <option value="{{.ID}}" {{if and $.Server (eq $.Server.AccountID .ID)}}selected{{end}}>{{.ProviderName}} / {{.Name}}</option>
+                {{end}}
+            </select>
         </div>
         <div class="form-row">
             <div class="form-group">
@@ -40,6 +30,12 @@
                        value="{{if .Server}}{{.Server.IP}}{{end}}"
                        placeholder="192.168.1.1">
             </div>
+        </div>
+        <div class="form-group">
+            <label for="location">Location</label>
+            <input type="text" id="location" name="location"
+                   value="{{if .Server}}{{.Server.Location}}{{end}}"
+                   placeholder="e.g. Nuremberg, DE or us-east-1">
         </div>
         <div class="form-row">
             <div class="form-group">

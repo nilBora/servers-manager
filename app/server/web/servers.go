@@ -36,9 +36,8 @@ func (h *Handler) handleServerForm(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := templateData{
-		Accounts:    accounts,
-		ServerTypes: enum.AllServerTypes(),
-		Statuses:    enum.AllServerStatuses(),
+		Accounts: accounts,
+		Statuses: enum.AllServerStatuses(),
 	}
 
 	if err := h.tmpl.ExecuteTemplate(w, "server-form", data); err != nil {
@@ -71,10 +70,9 @@ func (h *Handler) handleServerEditForm(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := templateData{
-		Server:      server,
-		Accounts:    accounts,
-		ServerTypes: enum.AllServerTypes(),
-		Statuses:    enum.AllServerStatuses(),
+		Server:   server,
+		Accounts: accounts,
+		Statuses: enum.AllServerStatuses(),
 	}
 
 	if err := h.tmpl.ExecuteTemplate(w, "server-form", data); err != nil {
@@ -132,12 +130,6 @@ func (h *Handler) handleServerCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	serverType, err := enum.ParseServerType(r.FormValue("server_type"))
-	if err != nil {
-		h.renderError(w, http.StatusBadRequest, "Invalid server type")
-		return
-	}
-
 	status, err := enum.ParseServerStatus(r.FormValue("status"))
 	if err != nil {
 		status = enum.ServerStatusActive
@@ -149,11 +141,11 @@ func (h *Handler) handleServerCreate(w http.ResponseWriter, r *http.Request) {
 		AccountID:       accountID,
 		Name:            r.FormValue("name"),
 		IP:              r.FormValue("ip"),
+		Location:        r.FormValue("location"),
 		Description:     r.FormValue("description"),
 		Responsible:     r.FormValue("responsible"),
 		ApproximateCost: cost,
 		Status:          status,
-		ServerType:      serverType,
 	}
 
 	if server.Name == "" {
@@ -197,12 +189,6 @@ func (h *Handler) handleServerUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	serverType, err := enum.ParseServerType(r.FormValue("server_type"))
-	if err != nil {
-		h.renderError(w, http.StatusBadRequest, "Invalid server type")
-		return
-	}
-
 	status, err := enum.ParseServerStatus(r.FormValue("status"))
 	if err != nil {
 		h.renderError(w, http.StatusBadRequest, "Invalid status")
@@ -216,11 +202,11 @@ func (h *Handler) handleServerUpdate(w http.ResponseWriter, r *http.Request) {
 		AccountID:       accountID,
 		Name:            r.FormValue("name"),
 		IP:              r.FormValue("ip"),
+		Location:        r.FormValue("location"),
 		Description:     r.FormValue("description"),
 		Responsible:     r.FormValue("responsible"),
 		ApproximateCost: cost,
 		Status:          status,
-		ServerType:      serverType,
 	}
 
 	if server.Name == "" {

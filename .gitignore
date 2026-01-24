@@ -9,3 +9,5 @@ backend/prisma/dev.db
 /backend/generated/prisma
 servers.db
 .db
+servers.db-shm
+servers.db-wal

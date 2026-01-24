@@ -4,10 +4,9 @@
     <thead>
         <tr>
             <th>Provider</th>
+            <th>Group</th>
             <th>Name</th>
-            <th>Login</th>
             <th>API Key</th>
-            <th>Type</th>
             <th>Servers</th>
             <th class="actions-col">Actions</th>
         </tr>
@@ -15,11 +14,10 @@
     <tbody>
         {{range .Accounts}}
         <tr>
-            <td><span class="provider-badge provider-{{.ProviderType.String}}">{{.ProviderName}}</span></td>
+            <td><span class="provider-badge">{{.ProviderName}}</span></td>
+            <td class="group-cell">{{if .GroupName}}{{.GroupName}}{{else}}-{{end}}</td>
             <td class="name-cell">{{.Name}}</td>
-            <td>{{if .Login}}{{.Login}}{{else}}-{{end}}</td>
             <td class="api-key-cell">{{if .ApiKey}}{{.ApiKey | maskApiKey}}{{else}}-{{end}}</td>
-            <td><span class="type-badge type-{{.AccountType.String}}">{{.AccountType.String}}</span></td>
             <td class="count-cell">{{.ServerCount}}</td>
             <td class="actions-cell">
                 <button class="btn btn-small btn-secondary"

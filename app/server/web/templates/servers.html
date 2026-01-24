@@ -12,9 +12,19 @@
     <div class="container">
         <div class="page-header">
             <h1>Servers</h1>
-            <button class="btn btn-primary" hx-get="/web/servers/new" hx-target="#modal-content" hx-swap="innerHTML" onclick="showModal()">
-                + Add Server
-            </button>
+            <div class="header-actions">
+                <button class="btn btn-secondary"
+                        hx-post="/web/sync/hetzner"
+                        hx-target="#servers-table"
+                        hx-swap="innerHTML"
+                        hx-indicator="#sync-indicator">
+                    <span id="sync-indicator" class="htmx-indicator">⟳</span>
+                    Sync Hetzner
+                </button>
+                <button class="btn btn-primary" hx-get="/web/servers/new" hx-target="#modal-content" hx-swap="innerHTML" onclick="showModal()">
+                    + Add Server
+                </button>
+            </div>
         </div>
 
         <div id="servers-table" class="table-container">

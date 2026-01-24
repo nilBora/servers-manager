@@ -1,32 +1,46 @@
 {{define "dashboard-accounts"}}
-{{if .Groups}}
-{{range .Groups}}
-<div class="account-group">
-    <div class="account-header">
-        <div class="account-info">
-            <span class="provider-badge provider-{{.ProviderType.String}}">{{.ProviderName}}</span>
-            <h3>{{.AccountName}}</h3>
-            <span class="account-type">{{.AccountType.String}}</span>
+{{if .ProviderGroups}}
+{{range .ProviderGroups}}
+<div class="provider-group">
+    <div class="provider-group-header">
+        <div class="provider-group-info">
+            <span class="provider-badge large">{{.ProviderName}}</span>
+            {{if .GroupName}}<span class="group-name">{{.GroupName}}</span>{{end}}
         </div>
-        <div class="account-meta">
-            <span class="server-count">{{len .Servers}} servers</span>
-            <span class="account-cost">{{.TotalCost | formatCost}}/mo</span>
+        <div class="provider-group-meta">
+            <span class="server-count">{{.ServerCount}} servers</span>
+            <span class="group-cost">{{.TotalCost | formatCost}}/mo</span>
         </div>
     </div>
-    <div class="servers-grid">
-        {{range .Servers}}
-        <div class="server-card" hx-get="/web/servers/{{.ID}}/view" hx-target="#modal-content" hx-swap="innerHTML" onclick="showModal()">
-            <div class="server-header">
-                <span class="server-name">{{.Name}}</span>
-                {{template "status-badge" .Status}}
+
+    <div class="accounts-container">
+        {{range .Accounts}}
+        <div class="account-group">
+            <div class="account-header">
+                <h4 class="account-name">{{.AccountName}}</h4>
+                <div class="account-meta">
+                    <span class="server-count">{{len .Servers}} servers</span>
+                    <span class="account-cost">{{.TotalCost | formatCost}}</span>
+                </div>
             </div>
-            <div class="server-details">
-                <div class="server-ip">{{if .IP}}{{.IP}}{{else}}-{{end}}</div>
-                <div class="server-cost">{{.ApproximateCost | formatCost}}</div>
+            <div class="servers-grid">
+                {{range .Servers}}
+                <div class="server-card" hx-get="/web/servers/{{.ID}}/view" hx-target="#modal-content" hx-swap="innerHTML" onclick="showModal()">
+                    <div class="server-header">
+                        <span class="server-name">{{.Name}}</span>
+                        {{template "status-badge" .Status}}
+                    </div>
+                    <div class="server-details">
+                        <div class="server-ip">{{if .IP}}{{.IP}}{{else}}-{{end}}</div>
+                        {{if .Location}}<div class="server-location">{{.Location}}</div>{{end}}
+                        <div class="server-cost">{{.ApproximateCost | formatCost}}</div>
+                    </div>
+                    {{if .Responsible}}
+                    <div class="server-responsible">{{.Responsible}}</div>
+                    {{end}}
+                </div>
+                {{end}}
             </div>
-            {{if .Responsible}}
-            <div class="server-responsible">{{.Responsible}}</div>
-            {{end}}
         </div>
         {{end}}
     </div>

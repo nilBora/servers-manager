@@ -89,6 +89,9 @@ func (h *Handler) Register(r chi.Router) {
 	// logs
 	r.Get("/web/logs", h.handleLogTable)
 
+	// sync
+	r.Post("/web/sync/hetzner", h.handleHetznerSync)
+
 	// dashboard
 	r.Get("/web/dashboard", h.handleDashboardContent)
 	r.Get("/web/dashboard/stats", h.handleDashboardStats)
@@ -215,29 +218,27 @@ type templateData struct {
 	Success      string
 
 	// dashboard data
-	Stats        *store.DashboardStats
-	Groups       []store.AccountGroup
-	StatusFilter string
+	Stats          *store.DashboardStats
+	Groups         []store.AccountGroup
+	ProviderGroups []store.ProviderAccountGroup
+	StatusFilter   string
 
 	// providers data
-	Providers     []store.Provider
-	Provider      *store.Provider
-	ProviderTypes []enum.ProviderType
+	Providers []store.Provider
+	Provider  *store.Provider
 
 	// accounts data
-	Accounts     []store.AccountWithProvider
-	Account      *store.AccountWithProvider
-	AccountTypes []enum.AccountType
+	Accounts []store.AccountWithProvider
+	Account  *store.AccountWithProvider
 
 	// servers data
-	Servers     []store.ServerWithAccount
-	Server      *store.ServerWithAccount
-	ServerTypes []enum.ServerType
-	Statuses    []enum.ServerStatus
+	Servers  []store.ServerWithAccount
+	Server   *store.ServerWithAccount
+	Statuses []enum.ServerStatus
 
 	// logs data
-	Logs        []store.ServerLogWithServer
-	Actions     []enum.LogAction
+	Logs         []store.ServerLogWithServer
+	Actions      []enum.LogAction
 	ActionFilter string
 }
 

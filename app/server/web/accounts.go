@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/nilBora/servers-manager/app/enum"
 	"github.com/nilBora/servers-manager/app/store"
 )
 
@@ -35,8 +34,7 @@ func (h *Handler) handleAccountForm(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := templateData{
-		Providers:    providers,
-		AccountTypes: enum.AllAccountTypes(),
+		Providers: providers,
 	}
 
 	if err := h.tmpl.ExecuteTemplate(w, "account-form", data); err != nil {
@@ -69,9 +67,8 @@ func (h *Handler) handleAccountEditForm(w http.ResponseWriter, r *http.Request) 
 	}
 
 	data := templateData{
-		Account:      account,
-		Providers:    providers,
-		AccountTypes: enum.AllAccountTypes(),
+		Account:   account,
+		Providers: providers,
 	}
 
 	if err := h.tmpl.ExecuteTemplate(w, "account-form", data); err != nil {
@@ -92,18 +89,12 @@ func (h *Handler) handleAccountCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	accountType, err := enum.ParseAccountType(r.FormValue("account_type"))
-	if err != nil {
-		h.renderError(w, http.StatusBadRequest, "Invalid account type")
-		return
-	}
-
 	account := &store.Account{
-		ProviderID:  providerID,
-		Name:        r.FormValue("name"),
-		Login:       r.FormValue("login"),
-		ApiKey:      r.FormValue("api_key"),
-		AccountType: accountType,
+		ProviderID: providerID,
+		GroupName:  r.FormValue("group_name"),
+		Name:       r.FormValue("name"),
+		Login:      r.FormValue("login"),
+		ApiKey:     r.FormValue("api_key"),
 	}
 
 	if account.Name == "" {
@@ -143,19 +134,13 @@ func (h *Handler) handleAccountUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	accountType, err := enum.ParseAccountType(r.FormValue("account_type"))
-	if err != nil {
-		h.renderError(w, http.StatusBadRequest, "Invalid account type")
-		return
-	}
-
 	account := &store.Account{
-		ID:          id,
-		ProviderID:  providerID,
-		Name:        r.FormValue("name"),
-		Login:       r.FormValue("login"),
-		ApiKey:      r.FormValue("api_key"),
-		AccountType: accountType,
+		ID:         id,
+		ProviderID: providerID,
+		GroupName:  r.FormValue("group_name"),
+		Name:       r.FormValue("name"),
+		Login:      r.FormValue("login"),
+		ApiKey:     r.FormValue("api_key"),
 	}
 
 	if account.Name == "" {

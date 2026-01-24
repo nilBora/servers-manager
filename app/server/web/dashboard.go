@@ -24,17 +24,17 @@ func (h *Handler) handleDashboardContent(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	groups, err := h.store.GetServersGroupedByAccount(r.Context(), status)
+	providerGroups, err := h.store.GetServersGroupedHierarchically(r.Context(), status)
 	if err != nil {
 		h.renderError(w, http.StatusInternalServerError, "Failed to load servers")
 		return
 	}
 
 	data := templateData{
-		Stats:        stats,
-		Groups:       groups,
-		Statuses:     enum.AllServerStatuses(),
-		StatusFilter: statusFilter,
+		Stats:          stats,
+		ProviderGroups: providerGroups,
+		Statuses:       enum.AllServerStatuses(),
+		StatusFilter:   statusFilter,
 	}
 
 	if err := h.tmpl.ExecuteTemplate(w, "dashboard-accounts", data); err != nil {

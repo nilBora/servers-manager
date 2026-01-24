@@ -4,7 +4,6 @@
     <thead>
         <tr>
             <th>Name</th>
-            <th>Type</th>
             <th>Description</th>
             <th>Created</th>
             <th class="actions-col">Actions</th>
@@ -14,7 +13,6 @@
         {{range .Providers}}
         <tr>
             <td class="name-cell">{{.Name}}</td>
-            <td><span class="provider-badge provider-{{.Type.String}}">{{.Type.String}}</span></td>
             <td class="desc-cell">{{.Description}}</td>
             <td class="date-cell">{{.CreatedAt | formatDate}}</td>
             <td class="actions-cell">

@@ -13,35 +13,28 @@
             <select id="provider_id" name="provider_id" required>
                 <option value="">Select provider...</option>
                 {{range .Providers}}
-                <option value="{{.ID}}" {{if and $.Account (eq $.Account.ProviderID .ID)}}selected{{end}}>{{.Name}} ({{.Type.String}})</option>
+                <option value="{{.ID}}" {{if and $.Account (eq $.Account.ProviderID .ID)}}selected{{end}}>{{.Name}}</option>
                 {{end}}
             </select>
+        </div>
+        <div class="form-group">
+            <label for="group_name">Account Group</label>
+            <input type="text" id="group_name" name="group_name"
+                   value="{{if .Account}}{{.Account.GroupName}}{{end}}"
+                   placeholder="e.g. Main Account (user@example.com)">
+            <small class="form-hint">Group related projects/credentials together</small>
         </div>
         <div class="form-group">
             <label for="name">Name</label>
             <input type="text" id="name" name="name" required
                    value="{{if .Account}}{{.Account.Name}}{{end}}"
-                   placeholder="Account name">
-        </div>
-        <div class="form-group">
-            <label for="login">Login</label>
-            <input type="text" id="login" name="login"
-                   value="{{if .Account}}{{.Account.Login}}{{end}}"
-                   placeholder="Optional login/username">
+                   placeholder="e.g. Cloud Production, Robot Dedicated">
         </div>
         <div class="form-group">
             <label for="api_key">API Key</label>
             <input type="password" id="api_key" name="api_key"
                    value="{{if .Account}}{{.Account.ApiKey}}{{end}}"
                    placeholder="Optional API key">
-        </div>
-        <div class="form-group">
-            <label for="account_type">Type</label>
-            <select id="account_type" name="account_type" required>
-                {{range .AccountTypes}}
-                <option value="{{.String}}" {{if and $.Account (eq $.Account.AccountType .)}}selected{{end}}>{{.String}}</option>
-                {{end}}
-            </select>
         </div>
     </div>
     <div class="modal-footer">

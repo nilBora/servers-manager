@@ -4,7 +4,6 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/nilBora/servers-manager/app/enum"
 	"github.com/nilBora/servers-manager/app/store"
 )
 
@@ -27,9 +26,7 @@ func (h *Handler) handleProviderTable(w http.ResponseWriter, r *http.Request) {
 
 // handleProviderForm renders the new provider form
 func (h *Handler) handleProviderForm(w http.ResponseWriter, r *http.Request) {
-	data := templateData{
-		ProviderTypes: enum.AllProviderTypes(),
-	}
+	data := templateData{}
 
 	if err := h.tmpl.ExecuteTemplate(w, "provider-form", data); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -55,8 +52,7 @@ func (h *Handler) handleProviderEditForm(w http.ResponseWriter, r *http.Request)
 	}
 
 	data := templateData{
-		Provider:      provider,
-		ProviderTypes: enum.AllProviderTypes(),
+		Provider: provider,
 	}
 
 	if err := h.tmpl.ExecuteTemplate(w, "provider-form", data); err != nil {
@@ -71,15 +67,8 @@ func (h *Handler) handleProviderCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	providerType, err := enum.ParseProviderType(r.FormValue("type"))
-	if err != nil {
-		h.renderError(w, http.StatusBadRequest, "Invalid provider type")
-		return
-	}
-
 	provider := &store.Provider{
 		Name:        r.FormValue("name"),
-		Type:        providerType,
 		Description: r.FormValue("description"),
 	}
 
@@ -114,16 +103,9 @@ func (h *Handler) handleProviderUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	providerType, err := enum.ParseProviderType(r.FormValue("type"))
-	if err != nil {
-		h.renderError(w, http.StatusBadRequest, "Invalid provider type")
-		return
-	}
-
 	provider := &store.Provider{
 		ID:          id,
 		Name:        r.FormValue("name"),
-		Type:        providerType,
 		Description: r.FormValue("description"),
 	}
 
