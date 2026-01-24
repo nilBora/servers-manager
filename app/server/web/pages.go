@@ -42,10 +42,9 @@ func (h *Handler) handleProviders(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := templateData{
-		Theme:         h.getTheme(r),
-		ActivePage:    "providers",
-		Providers:     providers,
-		ProviderTypes: enum.AllProviderTypes(),
+		Theme:      h.getTheme(r),
+		ActivePage: "providers",
+		Providers:  providers,
 	}
 
 	if err := h.tmpl.ExecuteTemplate(w, "providers.html", data); err != nil {
@@ -68,11 +67,10 @@ func (h *Handler) handleAccounts(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := templateData{
-		Theme:        h.getTheme(r),
-		ActivePage:   "accounts",
-		Accounts:     accounts,
-		Providers:    providers,
-		AccountTypes: enum.AllAccountTypes(),
+		Theme:      h.getTheme(r),
+		ActivePage: "accounts",
+		Accounts:   accounts,
+		Providers:  providers,
 	}
 
 	if err := h.tmpl.ExecuteTemplate(w, "accounts.html", data); err != nil {
@@ -95,12 +93,11 @@ func (h *Handler) handleServers(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := templateData{
-		Theme:       h.getTheme(r),
-		ActivePage:  "servers",
-		Servers:     servers,
-		Accounts:    accounts,
-		ServerTypes: enum.AllServerTypes(),
-		Statuses:    enum.AllServerStatuses(),
+		Theme:      h.getTheme(r),
+		ActivePage: "servers",
+		Servers:    servers,
+		Accounts:   accounts,
+		Statuses:   enum.AllServerStatuses(),
 	}
 
 	if err := h.tmpl.ExecuteTemplate(w, "servers.html", data); err != nil {

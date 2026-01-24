@@ -6,7 +6,7 @@
 <div class="modal-body server-view">
     <div class="server-view-header">
         {{template "status-badge" .Server.Status}}
-        <span class="provider-badge provider-{{.Server.ProviderType.String}}">{{.Server.ProviderName}}</span>
+        <span class="provider-badge">{{.Server.ProviderName}}</span>
         <span class="account-name">{{.Server.AccountName}}</span>
     </div>
 
@@ -14,10 +14,6 @@
         <div class="view-item">
             <label>IP Address</label>
             <span class="value ip-value">{{if .Server.IP}}{{.Server.IP}}{{else}}-{{end}}</span>
-        </div>
-        <div class="view-item">
-            <label>Type</label>
-            <span class="value"><span class="type-badge type-{{.Server.ServerType.String}}">{{.Server.ServerType.String}}</span></span>
         </div>
         <div class="view-item">
             <label>Monthly Cost</label>

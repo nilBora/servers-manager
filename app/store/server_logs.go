@@ -125,7 +125,7 @@ type serverLogRow struct {
 }
 
 func (r *serverLogRow) toServerLog() (*ServerLog, error) {
-	action, err := parseLogAction(r.Action)
+	action, err := enum.ParseLogAction(r.Action)
 	if err != nil {
 		return nil, err
 	}

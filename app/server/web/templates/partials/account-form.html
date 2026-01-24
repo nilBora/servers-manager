@@ -13,7 +13,7 @@
             <select id="provider_id" name="provider_id" required>
                 <option value="">Select provider...</option>
                 {{range .Providers}}
-                <option value="{{.ID}}" {{if and $.Account (eq $.Account.ProviderID .ID)}}selected{{end}}>{{.Name}} ({{.Type.String}})</option>
+                <option value="{{.ID}}" {{if and $.Account (eq $.Account.ProviderID .ID)}}selected{{end}}>{{.Name}}</option>
                 {{end}}
             </select>
         </div>
@@ -34,14 +34,6 @@
             <input type="password" id="api_key" name="api_key"
                    value="{{if .Account}}{{.Account.ApiKey}}{{end}}"
                    placeholder="Optional API key">
-        </div>
-        <div class="form-group">
-            <label for="account_type">Type</label>
-            <select id="account_type" name="account_type" required>
-                {{range .AccountTypes}}
-                <option value="{{.String}}" {{if and $.Account (eq $.Account.AccountType .)}}selected{{end}}>{{.String}}</option>
-                {{end}}
-            </select>
         </div>
     </div>
     <div class="modal-footer">

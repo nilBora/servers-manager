@@ -220,24 +220,21 @@ type templateData struct {
 	StatusFilter string
 
 	// providers data
-	Providers     []store.Provider
-	Provider      *store.Provider
-	ProviderTypes []enum.ProviderType
+	Providers []store.Provider
+	Provider  *store.Provider
 
 	// accounts data
-	Accounts     []store.AccountWithProvider
-	Account      *store.AccountWithProvider
-	AccountTypes []enum.AccountType
+	Accounts []store.AccountWithProvider
+	Account  *store.AccountWithProvider
 
 	// servers data
-	Servers     []store.ServerWithAccount
-	Server      *store.ServerWithAccount
-	ServerTypes []enum.ServerType
-	Statuses    []enum.ServerStatus
+	Servers  []store.ServerWithAccount
+	Server   *store.ServerWithAccount
+	Statuses []enum.ServerStatus
 
 	// logs data
-	Logs        []store.ServerLogWithServer
-	Actions     []enum.LogAction
+	Logs         []store.ServerLogWithServer
+	Actions      []enum.LogAction
 	ActionFilter string
 }
 

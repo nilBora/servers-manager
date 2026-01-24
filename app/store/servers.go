@@ -20,11 +20,11 @@ func (s *DB) CreateServer(ctx context.Context, srv *Server) error {
 	srv.UpdatedAt = now
 
 	query := `INSERT INTO servers (account_id, name, ip, description, responsible,
-		approximate_cost, status, server_type, created_at, updated_at)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+		approximate_cost, status, created_at, updated_at)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
 
 	result, err := s.db.ExecContext(ctx, query, srv.AccountID, srv.Name, srv.IP, srv.Description,
-		srv.Responsible, srv.ApproximateCost, srv.Status.String(), srv.ServerType.String(),
+		srv.Responsible, srv.ApproximateCost, srv.Status.String(),
 		srv.CreatedAt, srv.UpdatedAt)
 	if err != nil {
 		return fmt.Errorf("failed to create server: %w", err)
@@ -46,7 +46,7 @@ func (s *DB) GetServer(ctx context.Context, id int64) (*Server, error) {
 
 	var r serverRow
 	query := `SELECT id, account_id, name, ip, description, responsible,
-		approximate_cost, status, server_type, created_at, updated_at
+		approximate_cost, status, created_at, updated_at
 		FROM servers WHERE id = ?`
 	if err := s.db.GetContext(ctx, &r, query, id); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -65,9 +65,9 @@ func (s *DB) GetServerWithAccount(ctx context.Context, id int64) (*ServerWithAcc
 
 	var r serverWithAccountRow
 	query := `SELECT s.id, s.account_id, s.name, s.ip, s.description, s.responsible,
-		s.approximate_cost, s.status, s.server_type, s.created_at, s.updated_at,
+		s.approximate_cost, s.status, s.created_at, s.updated_at,
 		a.name as account_name, a.provider_id,
-		p.name as provider_name, p.type as provider_type
+		p.name as provider_name
 		FROM servers s
 		JOIN accounts a ON s.account_id = a.id
 		JOIN providers p ON a.provider_id = p.id
@@ -89,7 +89,7 @@ func (s *DB) ListServers(ctx context.Context) ([]Server, error) {
 
 	var rows []serverRow
 	query := `SELECT id, account_id, name, ip, description, responsible,
-		approximate_cost, status, server_type, created_at, updated_at
+		approximate_cost, status, created_at, updated_at
 		FROM servers ORDER BY name`
 	if err := s.db.SelectContext(ctx, &rows, query); err != nil {
 		return nil, fmt.Errorf("failed to list servers: %w", err)
@@ -114,9 +114,9 @@ func (s *DB) ListServersWithAccounts(ctx context.Context) ([]ServerWithAccount, 
 
 	var rows []serverWithAccountRow
 	query := `SELECT s.id, s.account_id, s.name, s.ip, s.description, s.responsible,
-		s.approximate_cost, s.status, s.server_type, s.created_at, s.updated_at,
+		s.approximate_cost, s.status, s.created_at, s.updated_at,
 		a.name as account_name, a.provider_id,
-		p.name as provider_name, p.type as provider_type
+		p.name as provider_name
 		FROM servers s
 		JOIN accounts a ON s.account_id = a.id
 		JOIN providers p ON a.provider_id = p.id
@@ -144,7 +144,7 @@ func (s *DB) ListServersByAccount(ctx context.Context, accountID int64) ([]Serve
 
 	var rows []serverRow
 	query := `SELECT id, account_id, name, ip, description, responsible,
-		approximate_cost, status, server_type, created_at, updated_at
+		approximate_cost, status, created_at, updated_at
 		FROM servers WHERE account_id = ? ORDER BY name`
 	if err := s.db.SelectContext(ctx, &rows, query, accountID); err != nil {
 		return nil, fmt.Errorf("failed to list servers: %w", err)
@@ -169,9 +169,9 @@ func (s *DB) ListServersByStatus(ctx context.Context, status enum.ServerStatus) 
 
 	var rows []serverWithAccountRow
 	query := `SELECT s.id, s.account_id, s.name, s.ip, s.description, s.responsible,
-		s.approximate_cost, s.status, s.server_type, s.created_at, s.updated_at,
+		s.approximate_cost, s.status, s.created_at, s.updated_at,
 		a.name as account_name, a.provider_id,
-		p.name as provider_name, p.type as provider_type
+		p.name as provider_name
 		FROM servers s
 		JOIN accounts a ON s.account_id = a.id
 		JOIN providers p ON a.provider_id = p.id
@@ -201,10 +201,10 @@ func (s *DB) UpdateServer(ctx context.Context, srv *Server) error {
 	srv.UpdatedAt = time.Now().UTC()
 
 	query := `UPDATE servers SET account_id = ?, name = ?, ip = ?, description = ?,
-		responsible = ?, approximate_cost = ?, status = ?, server_type = ?, updated_at = ?
+		responsible = ?, approximate_cost = ?, status = ?, updated_at = ?
 		WHERE id = ?`
 	result, err := s.db.ExecContext(ctx, query, srv.AccountID, srv.Name, srv.IP, srv.Description,
-		srv.Responsible, srv.ApproximateCost, srv.Status.String(), srv.ServerType.String(),
+		srv.Responsible, srv.ApproximateCost, srv.Status.String(),
 		srv.UpdatedAt, srv.ID)
 	if err != nil {
 		return fmt.Errorf("failed to update server: %w", err)
@@ -293,9 +293,9 @@ func (s *DB) GetServersGroupedByAccount(ctx context.Context, status *enum.Server
 
 	// build query with optional status filter
 	query := `SELECT s.id, s.account_id, s.name, s.ip, s.description, s.responsible,
-		s.approximate_cost, s.status, s.server_type, s.created_at, s.updated_at,
-		a.name as account_name, a.provider_id, a.account_type,
-		p.name as provider_name, p.type as provider_type
+		s.approximate_cost, s.status, s.created_at, s.updated_at,
+		a.name as account_name, a.provider_id,
+		p.name as provider_name
 		FROM servers s
 		JOIN accounts a ON s.account_id = a.id
 		JOIN providers p ON a.provider_id = p.id`
@@ -307,7 +307,7 @@ func (s *DB) GetServersGroupedByAccount(ctx context.Context, status *enum.Server
 	}
 	query += ` ORDER BY p.name, a.name, s.name`
 
-	var rows []serverWithAccountRowExt
+	var rows []serverWithAccountRow
 	if err := s.db.SelectContext(ctx, &rows, query, args...); err != nil {
 		return nil, fmt.Errorf("failed to get servers grouped: %w", err)
 	}
@@ -324,15 +324,11 @@ func (s *DB) GetServersGroupedByAccount(ctx context.Context, status *enum.Server
 
 		group, exists := groupMap[srv.AccountID]
 		if !exists {
-			at, _ := parseAccountType(r.AccountType)
-			pt, _ := parseProviderType(r.ProviderType)
 			group = &AccountGroup{
 				AccountID:    srv.AccountID,
 				AccountName:  srv.AccountName,
-				AccountType:  at,
 				ProviderID:   srv.ProviderID,
 				ProviderName: srv.ProviderName,
-				ProviderType: pt,
 				Servers:      make([]ServerWithAccount, 0),
 			}
 			groupMap[srv.AccountID] = group
@@ -364,17 +360,12 @@ type serverRow struct {
 	Responsible     string    `db:"responsible"`
 	ApproximateCost float64   `db:"approximate_cost"`
 	Status          string    `db:"status"`
-	ServerType      string    `db:"server_type"`
 	CreatedAt       time.Time `db:"created_at"`
 	UpdatedAt       time.Time `db:"updated_at"`
 }
 
 func (r *serverRow) toServer() (*Server, error) {
-	st, err := parseServerStatus(r.Status)
-	if err != nil {
-		return nil, err
-	}
-	srvType, err := parseServerType(r.ServerType)
+	st, err := enum.ParseServerStatus(r.Status)
 	if err != nil {
 		return nil, err
 	}
@@ -387,7 +378,6 @@ func (r *serverRow) toServer() (*Server, error) {
 		Responsible:     r.Responsible,
 		ApproximateCost: r.ApproximateCost,
 		Status:          st,
-		ServerType:      srvType,
 		CreatedAt:       r.CreatedAt,
 		UpdatedAt:       r.UpdatedAt,
 	}, nil
@@ -398,15 +388,10 @@ type serverWithAccountRow struct {
 	AccountName  string `db:"account_name"`
 	ProviderID   int64  `db:"provider_id"`
 	ProviderName string `db:"provider_name"`
-	ProviderType string `db:"provider_type"`
 }
 
 func (r *serverWithAccountRow) toServerWithAccount() (*ServerWithAccount, error) {
 	srv, err := r.serverRow.toServer()
-	if err != nil {
-		return nil, err
-	}
-	pt, err := parseProviderType(r.ProviderType)
 	if err != nil {
 		return nil, err
 	}
@@ -415,11 +400,5 @@ func (r *serverWithAccountRow) toServerWithAccount() (*ServerWithAccount, error)
 		AccountName:  r.AccountName,
 		ProviderID:   r.ProviderID,
 		ProviderName: r.ProviderName,
-		ProviderType: pt,
 	}, nil
-}
-
-type serverWithAccountRowExt struct {
-	serverWithAccountRow
-	AccountType string `db:"account_type"`
 }

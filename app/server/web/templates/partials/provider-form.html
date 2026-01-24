@@ -15,14 +15,6 @@
                    placeholder="Provider name">
         </div>
         <div class="form-group">
-            <label for="type">Type</label>
-            <select id="type" name="type" required>
-                {{range .ProviderTypes}}
-                <option value="{{.String}}" {{if and $.Provider (eq $.Provider.Type .)}}selected{{end}}>{{.String}}</option>
-                {{end}}
-            </select>
-        </div>
-        <div class="form-group">
             <label for="description">Description</label>
             <textarea id="description" name="description" rows="3"
                       placeholder="Optional description">{{if .Provider}}{{.Provider.Description}}{{end}}</textarea>

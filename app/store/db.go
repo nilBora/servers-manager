@@ -29,6 +29,11 @@ func New(dbPath string) (*DB, error) {
 		return nil, fmt.Errorf("failed to create schema: %w", err)
 	}
 
+	if err := store.seedDefaultProviders(); err != nil {
+		_ = db.Close()
+		return nil, fmt.Errorf("failed to seed providers: %w", err)
+	}
+
 	log.Printf("[DEBUG] initialized sqlite store at %s", dbPath)
 	return store, nil
 }
@@ -68,7 +73,6 @@ func (s *DB) createSchema() error {
 		CREATE TABLE IF NOT EXISTS providers (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			name TEXT NOT NULL UNIQUE,
-			type TEXT NOT NULL,
 			description TEXT,
 			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -81,7 +85,6 @@ func (s *DB) createSchema() error {
 			name TEXT NOT NULL,
 			login TEXT,
 			api_key TEXT,
-			account_type TEXT NOT NULL DEFAULT 'cloud',
 			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 			UNIQUE(provider_id, name)
@@ -97,7 +100,6 @@ func (s *DB) createSchema() error {
 			responsible TEXT,
 			approximate_cost REAL DEFAULT 0,
 			status TEXT NOT NULL DEFAULT 'active',
-			server_type TEXT NOT NULL DEFAULT 'cloud',
 			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 		);
@@ -122,6 +124,43 @@ func (s *DB) createSchema() error {
 	if _, err := s.db.Exec(schema); err != nil {
 		return fmt.Errorf("failed to create schema: %w", err)
 	}
+	return nil
+}
+
+// seedDefaultProviders adds default providers if none exist
+func (s *DB) seedDefaultProviders() error {
+	// Check if providers already exist
+	var count int
+	if err := s.db.Get(&count, "SELECT COUNT(*) FROM providers"); err != nil {
+		return fmt.Errorf("failed to count providers: %w", err)
+	}
+
+	if count > 0 {
+		return nil // Already seeded
+	}
+
+	// Default providers
+	providers := []struct {
+		Name        string
+		Description string
+	}{
+		{"Hetzner", "Hetzner Cloud and Dedicated Servers"},
+		{"AWS", "Amazon Web Services"},
+		{"Scaleway", "Scaleway Cloud Platform"},
+		{"Vsys Host", "Vsys Hosting Services"},
+	}
+
+	for _, p := range providers {
+		_, err := s.db.Exec(
+			"INSERT INTO providers (name, description) VALUES (?, ?)",
+			p.Name, p.Description,
+		)
+		if err != nil {
+			return fmt.Errorf("failed to insert provider %s: %w", p.Name, err)
+		}
+	}
+
+	log.Printf("[INFO] seeded %d default providers", len(providers))
 	return nil
 }
 
