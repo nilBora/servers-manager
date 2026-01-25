@@ -14,18 +14,18 @@ func (h *Handler) handleDashboard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	groups, err := h.store.GetServersGroupedByAccount(r.Context(), nil)
+	providerGroups, err := h.store.GetServersGroupedHierarchically(r.Context(), nil)
 	if err != nil {
 		h.renderError(w, http.StatusInternalServerError, "Failed to load servers")
 		return
 	}
 
 	data := templateData{
-		Theme:      h.getTheme(r),
-		ActivePage: "dashboard",
-		Stats:      stats,
-		Groups:     groups,
-		Statuses:   enum.AllServerStatuses(),
+		Theme:          h.getTheme(r),
+		ActivePage:     "dashboard",
+		Stats:          stats,
+		ProviderGroups: providerGroups,
+		Statuses:       enum.AllServerStatuses(),
 	}
 
 	if err := h.tmpl.ExecuteTemplate(w, "dashboard.html", data); err != nil {
