@@ -89,3 +89,33 @@ if (!document.cookie.includes('theme=')) {
 function title(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
+
+// Update API key hint based on selected provider
+function updateApiKeyHint(select) {
+    const selectedOption = select.options[select.selectedIndex];
+    const ident = selectedOption.getAttribute('data-ident') || '';
+
+    const robotHint = document.getElementById('api-key-hint-robot');
+    const cloudHint = document.getElementById('api-key-hint-cloud');
+
+    if (!robotHint || !cloudHint) return;
+
+    // Hide all hints first
+    robotHint.style.display = 'none';
+    cloudHint.style.display = 'none';
+
+    // Show relevant hint
+    if (ident === 'hetzner_robot') {
+        robotHint.style.display = 'block';
+    } else if (ident === 'hetzner_cloud') {
+        cloudHint.style.display = 'block';
+    }
+}
+
+// Initialize hints on modal load
+document.body.addEventListener('htmx:afterSwap', function(event) {
+    const providerSelect = document.getElementById('provider_id');
+    if (providerSelect) {
+        updateApiKeyHint(providerSelect);
+    }
+});

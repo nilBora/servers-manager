@@ -9,6 +9,13 @@
       hx-on::after-request="if(event.detail.successful) hideModal()">
     <div class="modal-body">
         <div class="form-group">
+            <label for="ident">Ident</label>
+            <input type="text" id="ident" name="ident" required
+                   value="{{if .Provider}}{{.Provider.Ident}}{{end}}"
+                   placeholder="e.g. hetzner_cloud, aws, scaleway">
+            <small class="form-hint">Unique identifier for API integrations</small>
+        </div>
+        <div class="form-group">
             <label for="name">Name</label>
             <input type="text" id="name" name="name" required
                    value="{{if .Provider}}{{.Provider.Name}}{{end}}"

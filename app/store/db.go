@@ -77,7 +77,8 @@ func (s *DB) createSchema() error {
 		-- Providers
 		CREATE TABLE IF NOT EXISTS providers (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			name TEXT NOT NULL UNIQUE,
+			ident TEXT NOT NULL UNIQUE,
+			name TEXT NOT NULL,
 			description TEXT,
 			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -163,6 +164,32 @@ func (s *DB) runMigrations() error {
 		log.Printf("[INFO] migration: added location column to servers")
 	}
 
+	// Migration: Add ident column to providers if it doesn't exist
+	err = s.db.Get(&count, `SELECT COUNT(*) FROM pragma_table_info('providers') WHERE name='ident'`)
+	if err != nil {
+		return fmt.Errorf("failed to check providers schema: %w", err)
+	}
+	if count == 0 {
+		_, err := s.db.Exec(`ALTER TABLE providers ADD COLUMN ident TEXT DEFAULT ''`)
+		if err != nil {
+			return fmt.Errorf("failed to add ident column: %w", err)
+		}
+		// Set default idents for existing providers
+		_, _ = s.db.Exec(`UPDATE providers SET ident = 'hetzner_cloud' WHERE name = 'Hetzner'`)
+		_, _ = s.db.Exec(`UPDATE providers SET ident = 'aws' WHERE name = 'AWS'`)
+		_, _ = s.db.Exec(`UPDATE providers SET ident = 'scaleway' WHERE name = 'Scaleway'`)
+		_, _ = s.db.Exec(`UPDATE providers SET ident = 'vsys_host' WHERE name = 'Vsys Host'`)
+		log.Printf("[INFO] migration: added ident column to providers")
+
+		// Add Hetzner Robot as new provider if Hetzner Cloud exists
+		var hetznerExists int
+		_ = s.db.Get(&hetznerExists, `SELECT COUNT(*) FROM providers WHERE ident = 'hetzner_cloud'`)
+		if hetznerExists > 0 {
+			_, _ = s.db.Exec(`INSERT INTO providers (ident, name, description) VALUES ('hetzner_robot', 'Hetzner Robot', 'Hetzner Dedicated Servers')`)
+			log.Printf("[INFO] migration: added Hetzner Robot provider")
+		}
+	}
+
 	return nil
 }
 
@@ -180,19 +207,21 @@ func (s *DB) seedDefaultProviders() error {
 
 	// Default providers
 	providers := []struct {
+		Ident       string
 		Name        string
 		Description string
 	}{
-		{"Hetzner", "Hetzner Cloud and Dedicated Servers"},
-		{"AWS", "Amazon Web Services"},
-		{"Scaleway", "Scaleway Cloud Platform"},
-		{"Vsys Host", "Vsys Hosting Services"},
+		{"hetzner_cloud", "Hetzner Cloud", "Hetzner Cloud Servers"},
+		{"hetzner_robot", "Hetzner Robot", "Hetzner Dedicated Servers"},
+		{"aws", "AWS", "Amazon Web Services"},
+		{"scaleway", "Scaleway", "Scaleway Cloud Platform"},
+		{"vsys_host", "Vsys Host", "Vsys Hosting Services"},
 	}
 
 	for _, p := range providers {
 		_, err := s.db.Exec(
-			"INSERT INTO providers (name, description) VALUES (?, ?)",
-			p.Name, p.Description,
+			"INSERT INTO providers (ident, name, description) VALUES (?, ?, ?)",
+			p.Ident, p.Name, p.Description,
 		)
 		if err != nil {
 			return fmt.Errorf("failed to insert provider %s: %w", p.Name, err)

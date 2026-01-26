@@ -10,10 +10,10 @@
     <div class="modal-body">
         <div class="form-group">
             <label for="provider_id">Provider</label>
-            <select id="provider_id" name="provider_id" required>
-                <option value="">Select provider...</option>
+            <select id="provider_id" name="provider_id" required onchange="updateApiKeyHint(this)">
+                <option value="" data-ident="">Select provider...</option>
                 {{range .Providers}}
-                <option value="{{.ID}}" {{if and $.Account (eq $.Account.ProviderID .ID)}}selected{{end}}>{{.Name}}</option>
+                <option value="{{.ID}}" data-ident="{{.Ident}}" {{if and $.Account (eq $.Account.ProviderID .ID)}}selected{{end}}>{{.Name}}</option>
                 {{end}}
             </select>
         </div>
@@ -35,6 +35,12 @@
             <input type="password" id="api_key" name="api_key"
                    value="{{if .Account}}{{.Account.ApiKey}}{{end}}"
                    placeholder="Optional API key">
+            <small id="api-key-hint-robot" class="form-hint" style="display: none;">
+                For Robot: enter <code>username:password</code> (create in Robot → Settings → Web service)
+            </small>
+            <small id="api-key-hint-cloud" class="form-hint" style="display: none;">
+                For Cloud: enter API token (create in Cloud Console → Security → API tokens)
+            </small>
         </div>
     </div>
     <div class="modal-footer">

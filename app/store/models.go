@@ -9,6 +9,7 @@ import (
 // Provider represents a cloud infrastructure provider
 type Provider struct {
 	ID          int64     `db:"id"`
+	Ident       string    `db:"ident"`
 	Name        string    `db:"name"`
 	Description string    `db:"description"`
 	CreatedAt   time.Time `db:"created_at"`
@@ -30,8 +31,9 @@ type Account struct {
 // AccountWithProvider extends Account with provider info for display
 type AccountWithProvider struct {
 	Account
-	ProviderName string `db:"provider_name"`
-	ServerCount  int    `db:"server_count"`
+	ProviderIdent string `db:"provider_ident"`
+	ProviderName  string `db:"provider_name"`
+	ServerCount   int    `db:"server_count"`
 }
 
 // AccountGroupSummary represents a group of accounts for dashboard display
