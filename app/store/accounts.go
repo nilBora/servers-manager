@@ -64,7 +64,7 @@ func (s *DB) GetAccountWithProvider(ctx context.Context, id int64) (*AccountWith
 	var a AccountWithProvider
 	query := `SELECT a.id, a.provider_id, a.group_name, a.name, a.login, a.api_key,
 		a.created_at, a.updated_at,
-		p.name as provider_name,
+		p.ident as provider_ident, p.name as provider_name,
 		(SELECT COUNT(*) FROM servers WHERE account_id = a.id) as server_count
 		FROM accounts a
 		JOIN providers p ON a.provider_id = p.id
@@ -102,7 +102,7 @@ func (s *DB) ListAccountsWithProviders(ctx context.Context) ([]AccountWithProvid
 	var accounts []AccountWithProvider
 	query := `SELECT a.id, a.provider_id, a.group_name, a.name, a.login, a.api_key,
 		a.created_at, a.updated_at,
-		p.name as provider_name,
+		p.ident as provider_ident, p.name as provider_name,
 		(SELECT COUNT(*) FROM servers WHERE account_id = a.id) as server_count
 		FROM accounts a
 		JOIN providers p ON a.provider_id = p.id

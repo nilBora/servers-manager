@@ -3,6 +3,7 @@
 <table class="data-table">
     <thead>
         <tr>
+            <th>Ident</th>
             <th>Name</th>
             <th>Description</th>
             <th>Created</th>
@@ -12,6 +13,7 @@
     <tbody>
         {{range .Providers}}
         <tr>
+            <td class="ident-cell"><code>{{.Ident}}</code></td>
             <td class="name-cell">{{.Name}}</td>
             <td class="desc-cell">{{.Description}}</td>
             <td class="date-cell">{{.CreatedAt | formatDate}}</td>

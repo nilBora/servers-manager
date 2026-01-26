@@ -23,13 +23,13 @@ func (s *DB) CreateProvider(ctx context.Context, p *Provider) error {
 	p.CreatedAt = now
 	p.UpdatedAt = now
 
-	query := `INSERT INTO providers (name, description, created_at, updated_at)
-		VALUES (?, ?, ?, ?)`
+	query := `INSERT INTO providers (ident, name, description, created_at, updated_at)
+		VALUES (?, ?, ?, ?, ?)`
 
-	result, err := s.db.ExecContext(ctx, query, p.Name, p.Description, p.CreatedAt, p.UpdatedAt)
+	result, err := s.db.ExecContext(ctx, query, p.Ident, p.Name, p.Description, p.CreatedAt, p.UpdatedAt)
 	if err != nil {
 		if isUniqueViolation(err) {
-			return fmt.Errorf("%w: provider with name %q already exists", ErrConflict, p.Name)
+			return fmt.Errorf("%w: provider with ident %q already exists", ErrConflict, p.Ident)
 		}
 		return fmt.Errorf("failed to create provider: %w", err)
 	}
@@ -49,7 +49,7 @@ func (s *DB) GetProvider(ctx context.Context, id int64) (*Provider, error) {
 	defer s.mu.RUnlock()
 
 	var p Provider
-	query := `SELECT id, name, description, created_at, updated_at FROM providers WHERE id = ?`
+	query := `SELECT id, ident, name, description, created_at, updated_at FROM providers WHERE id = ?`
 	if err := s.db.GetContext(ctx, &p, query, id); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, ErrNotFound
@@ -66,7 +66,7 @@ func (s *DB) GetProviderByName(ctx context.Context, name string) (*Provider, err
 	defer s.mu.RUnlock()
 
 	var p Provider
-	query := `SELECT id, name, description, created_at, updated_at FROM providers WHERE name = ?`
+	query := `SELECT id, ident, name, description, created_at, updated_at FROM providers WHERE name = ?`
 	if err := s.db.GetContext(ctx, &p, query, name); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, ErrNotFound
@@ -83,7 +83,7 @@ func (s *DB) ListProviders(ctx context.Context) ([]Provider, error) {
 	defer s.mu.RUnlock()
 
 	var providers []Provider
-	query := `SELECT id, name, description, created_at, updated_at FROM providers ORDER BY name`
+	query := `SELECT id, ident, name, description, created_at, updated_at FROM providers ORDER BY name`
 	if err := s.db.SelectContext(ctx, &providers, query); err != nil {
 		return nil, fmt.Errorf("failed to list providers: %w", err)
 	}
@@ -98,11 +98,11 @@ func (s *DB) UpdateProvider(ctx context.Context, p *Provider) error {
 
 	p.UpdatedAt = time.Now().UTC()
 
-	query := `UPDATE providers SET name = ?, description = ?, updated_at = ? WHERE id = ?`
-	result, err := s.db.ExecContext(ctx, query, p.Name, p.Description, p.UpdatedAt, p.ID)
+	query := `UPDATE providers SET ident = ?, name = ?, description = ?, updated_at = ? WHERE id = ?`
+	result, err := s.db.ExecContext(ctx, query, p.Ident, p.Name, p.Description, p.UpdatedAt, p.ID)
 	if err != nil {
 		if isUniqueViolation(err) {
-			return fmt.Errorf("%w: provider with name %q already exists", ErrConflict, p.Name)
+			return fmt.Errorf("%w: provider with ident %q already exists", ErrConflict, p.Ident)
 		}
 		return fmt.Errorf("failed to update provider: %w", err)
 	}

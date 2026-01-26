@@ -68,8 +68,14 @@ func (h *Handler) handleProviderCreate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	provider := &store.Provider{
+		Ident:       r.FormValue("ident"),
 		Name:        r.FormValue("name"),
 		Description: r.FormValue("description"),
+	}
+
+	if provider.Ident == "" {
+		h.renderError(w, http.StatusBadRequest, "Ident is required")
+		return
 	}
 
 	if provider.Name == "" {
@@ -79,7 +85,7 @@ func (h *Handler) handleProviderCreate(w http.ResponseWriter, r *http.Request) {
 
 	if err := h.store.CreateProvider(r.Context(), provider); err != nil {
 		if errors.Is(err, store.ErrConflict) {
-			h.renderError(w, http.StatusConflict, "Provider with this name already exists")
+			h.renderError(w, http.StatusConflict, "Provider with this ident already exists")
 			return
 		}
 		h.renderError(w, http.StatusInternalServerError, "Failed to create provider")
@@ -105,8 +111,14 @@ func (h *Handler) handleProviderUpdate(w http.ResponseWriter, r *http.Request) {
 
 	provider := &store.Provider{
 		ID:          id,
+		Ident:       r.FormValue("ident"),
 		Name:        r.FormValue("name"),
 		Description: r.FormValue("description"),
+	}
+
+	if provider.Ident == "" {
+		h.renderError(w, http.StatusBadRequest, "Ident is required")
+		return
 	}
 
 	if provider.Name == "" {
@@ -120,7 +132,7 @@ func (h *Handler) handleProviderUpdate(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		if errors.Is(err, store.ErrConflict) {
-			h.renderError(w, http.StatusConflict, "Provider with this name already exists")
+			h.renderError(w, http.StatusConflict, "Provider with this ident already exists")
 			return
 		}
 		h.renderError(w, http.StatusInternalServerError, "Failed to update provider")
