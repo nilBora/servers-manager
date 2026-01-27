@@ -833,7 +833,7 @@ select.action-filter {
     border-radius: var(--radius-lg);
     overflow: hidden;
     box-shadow: var(--shadow);
-    margin-bottom: 1.5rem;
+    transition: opacity 0.2s, transform 0.2s;
 }
 
 .provider-group-header {
@@ -843,6 +843,42 @@ select.action-filter {
     justify-content: space-between;
     align-items: center;
     border-bottom: 2px solid var(--border-color);
+    gap: 0.75rem;
+}
+
+/* Drag handle */
+.drag-handle {
+    cursor: grab;
+    color: var(--text-muted);
+    font-size: 1.25rem;
+    padding: 0.25rem;
+    user-select: none;
+    transition: color 0.2s;
+}
+
+.drag-handle:hover {
+    color: var(--text-secondary);
+}
+
+.drag-handle:active {
+    cursor: grabbing;
+}
+
+/* Drag states */
+.provider-group.dragging {
+    opacity: 0.5;
+    transform: scale(0.98);
+}
+
+.provider-group.drag-over {
+    border: 2px dashed var(--primary);
+    background: var(--bg-secondary);
+}
+
+.provider-groups-sortable {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
 }
 
 .provider-group-info {
