@@ -112,10 +112,132 @@ function updateApiKeyHint(select) {
     }
 }
 
-// Initialize hints on modal load
+// Initialize hints on modal load and dashboard sorting on content updates
 document.body.addEventListener('htmx:afterSwap', function(event) {
     const providerSelect = document.getElementById('provider_id');
     if (providerSelect) {
         updateApiKeyHint(providerSelect);
     }
+
+    // Reinitialize dashboard sorting if container exists
+    if (document.getElementById('provider-groups-container')) {
+        initDashboardSorting();
+    }
 });
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    if (document.getElementById('provider-groups-container')) {
+        initDashboardSorting();
+    }
+});
+
+// Dashboard drag-and-drop sorting
+const DASHBOARD_ORDER_KEY = 'dashboard_group_order';
+
+function initDashboardSorting() {
+    const container = document.getElementById('provider-groups-container');
+    if (!container) return;
+
+    // Apply saved order first
+    applySavedOrder(container);
+
+    // Setup drag events
+    const groups = container.querySelectorAll('.provider-group');
+    groups.forEach(group => {
+        group.addEventListener('dragstart', handleDragStart);
+        group.addEventListener('dragend', handleDragEnd);
+        group.addEventListener('dragover', handleDragOver);
+        group.addEventListener('dragenter', handleDragEnter);
+        group.addEventListener('dragleave', handleDragLeave);
+        group.addEventListener('drop', handleDrop);
+    });
+}
+
+let draggedElement = null;
+
+function handleDragStart(e) {
+    draggedElement = this;
+    this.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', this.dataset.groupKey);
+}
+
+function handleDragEnd(e) {
+    this.classList.remove('dragging');
+    document.querySelectorAll('.provider-group').forEach(group => {
+        group.classList.remove('drag-over');
+    });
+    draggedElement = null;
+}
+
+function handleDragOver(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+}
+
+function handleDragEnter(e) {
+    e.preventDefault();
+    if (this !== draggedElement) {
+        this.classList.add('drag-over');
+    }
+}
+
+function handleDragLeave(e) {
+    this.classList.remove('drag-over');
+}
+
+function handleDrop(e) {
+    e.preventDefault();
+    this.classList.remove('drag-over');
+
+    if (draggedElement && this !== draggedElement) {
+        const container = this.parentNode;
+        const allGroups = Array.from(container.querySelectorAll('.provider-group'));
+        const draggedIdx = allGroups.indexOf(draggedElement);
+        const targetIdx = allGroups.indexOf(this);
+
+        if (draggedIdx < targetIdx) {
+            container.insertBefore(draggedElement, this.nextSibling);
+        } else {
+            container.insertBefore(draggedElement, this);
+        }
+
+        // Save new order
+        saveGroupOrder(container);
+    }
+}
+
+function saveGroupOrder(container) {
+    const groups = container.querySelectorAll('.provider-group');
+    const order = Array.from(groups).map(g => g.dataset.groupKey);
+    localStorage.setItem(DASHBOARD_ORDER_KEY, JSON.stringify(order));
+}
+
+function applySavedOrder(container) {
+    const savedOrder = localStorage.getItem(DASHBOARD_ORDER_KEY);
+    if (!savedOrder) return;
+
+    try {
+        const order = JSON.parse(savedOrder);
+        const groups = Array.from(container.querySelectorAll('.provider-group'));
+        const groupMap = new Map(groups.map(g => [g.dataset.groupKey, g]));
+
+        // Sort groups according to saved order
+        order.forEach(key => {
+            const group = groupMap.get(key);
+            if (group) {
+                container.appendChild(group);
+            }
+        });
+
+        // Append any new groups that weren't in saved order
+        groups.forEach(group => {
+            if (!order.includes(group.dataset.groupKey)) {
+                container.appendChild(group);
+            }
+        });
+    } catch (e) {
+        console.warn('Failed to apply saved dashboard order:', e);
+    }
+}

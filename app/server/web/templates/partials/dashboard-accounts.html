@@ -1,8 +1,10 @@
 {{define "dashboard-accounts"}}
 {{if .ProviderGroups}}
+<div id="provider-groups-container" class="provider-groups-sortable">
 {{range .ProviderGroups}}
-<div class="provider-group">
+<div class="provider-group" draggable="true" data-group-key="{{.GroupKey}}">
     <div class="provider-group-header">
+        <span class="drag-handle" title="Drag to reorder">&#9776;</span>
         <div class="provider-group-info">
             <span class="provider-badge large">{{.ProviderName}}</span>
             {{if .GroupName}}<span class="group-name">{{.GroupName}}</span>{{end}}
@@ -46,6 +48,16 @@
     </div>
 </div>
 {{end}}
+</div>
+<script>
+if (typeof initDashboardSorting === 'function') {
+    initDashboardSorting();
+} else {
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof initDashboardSorting === 'function') initDashboardSorting();
+    });
+}
+</script>
 {{else}}
 <div class="empty-state">
     <p>No servers found</p>
