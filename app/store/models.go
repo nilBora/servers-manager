@@ -6,6 +6,23 @@ import (
 	"github.com/nilBora/servers-manager/app/enum"
 )
 
+// User represents an application user
+type User struct {
+	ID           int64     `db:"id"`
+	Username     string    `db:"username"`
+	PasswordHash string    `db:"password_hash"`
+	CreatedAt    time.Time `db:"created_at"`
+	UpdatedAt    time.Time `db:"updated_at"`
+}
+
+// Session represents a user session
+type Session struct {
+	ID        string    `db:"id"`
+	UserID    int64     `db:"user_id"`
+	ExpiresAt time.Time `db:"expires_at"`
+	CreatedAt time.Time `db:"created_at"`
+}
+
 // Provider represents a cloud infrastructure provider
 type Provider struct {
 	ID          int64     `db:"id"`
