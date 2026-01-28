@@ -121,12 +121,31 @@ func (s *DB) createSchema() error {
 			created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 		);
 
+		-- Users
+		CREATE TABLE IF NOT EXISTS users (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			username TEXT NOT NULL UNIQUE,
+			password_hash TEXT NOT NULL,
+			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+		);
+
+		-- Sessions
+		CREATE TABLE IF NOT EXISTS sessions (
+			id TEXT PRIMARY KEY,
+			user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+			expires_at DATETIME NOT NULL,
+			created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+		);
+
 		-- Indexes
 		CREATE INDEX IF NOT EXISTS idx_accounts_provider ON accounts(provider_id);
 		CREATE INDEX IF NOT EXISTS idx_servers_account ON servers(account_id);
 		CREATE INDEX IF NOT EXISTS idx_servers_status ON servers(status);
 		CREATE INDEX IF NOT EXISTS idx_server_logs_server ON server_logs(server_id);
 		CREATE INDEX IF NOT EXISTS idx_server_logs_created ON server_logs(created_at);
+		CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions(user_id);
+		CREATE INDEX IF NOT EXISTS idx_sessions_expires ON sessions(expires_at);
 	`
 
 	if _, err := s.db.Exec(schema); err != nil {

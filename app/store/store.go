@@ -54,11 +54,31 @@ type ServerLogStore interface {
 	ListLogsByAction(ctx context.Context, action enum.LogAction, limit int) ([]ServerLogWithServer, error)
 }
 
+// UserStore defines operations for users
+type UserStore interface {
+	CreateUser(ctx context.Context, u *User) error
+	GetUserByUsername(ctx context.Context, username string) (*User, error)
+	GetUserByID(ctx context.Context, id int64) (*User, error)
+	UpdateUserPassword(ctx context.Context, id int64, passwordHash string) error
+	CountUsers(ctx context.Context) (int, error)
+}
+
+// SessionStore defines operations for sessions
+type SessionStore interface {
+	CreateSession(ctx context.Context, s *Session) error
+	GetSession(ctx context.Context, id string) (*Session, error)
+	DeleteSession(ctx context.Context, id string) error
+	DeleteExpiredSessions(ctx context.Context) error
+	DeleteUserSessions(ctx context.Context, userID int64) error
+}
+
 // Store combines all store interfaces
 type Store interface {
 	ProviderStore
 	AccountStore
 	ServerStore
 	ServerLogStore
+	UserStore
+	SessionStore
 	Close() error
 }

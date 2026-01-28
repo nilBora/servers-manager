@@ -942,6 +942,63 @@ select.action-filter {
     color: var(--text-muted);
 }
 
+/* Auth Pages */
+.auth-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-secondary);
+}
+
+.auth-container {
+    width: 100%;
+    max-width: 400px;
+    padding: 1rem;
+}
+
+.auth-card {
+    background: var(--bg-primary);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    padding: 2rem;
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.auth-header h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.auth-header p {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.auth-form .form-group {
+    margin-bottom: 1.25rem;
+}
+
+.auth-error {
+    background: #dc354520;
+    color: var(--danger);
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius);
+    font-size: 0.875rem;
+    margin-bottom: 1.5rem;
+}
+
+.btn-block {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .navbar {

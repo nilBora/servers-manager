@@ -53,51 +53,63 @@ func New(st store.Store) (*Handler, error) {
 
 // Register registers web UI routes on the given router
 func (h *Handler) Register(r chi.Router) {
-	// pages
-	r.Get("/", h.handleDashboard)
-	r.Get("/providers", h.handleProviders)
-	r.Get("/accounts", h.handleAccounts)
-	r.Get("/servers", h.handleServers)
-	r.Get("/logs", h.handleLogs)
+	// Public routes (no auth required)
+	r.Get("/login", h.handleLogin)
+	r.Post("/login", h.handleLoginPost)
+	r.Get("/setup", h.handleSetup)
+	r.Post("/setup", h.handleSetupPost)
+	r.Get("/logout", h.handleLogout)
 
-	// provider CRUD
-	r.Get("/web/providers", h.handleProviderTable)
-	r.Get("/web/providers/new", h.handleProviderForm)
-	r.Get("/web/providers/{id}/edit", h.handleProviderEditForm)
-	r.Post("/web/providers", h.handleProviderCreate)
-	r.Put("/web/providers/{id}", h.handleProviderUpdate)
-	r.Delete("/web/providers/{id}", h.handleProviderDelete)
+	// Protected routes (auth required)
+	r.Group(func(r chi.Router) {
+		r.Use(h.AuthMiddleware)
 
-	// account CRUD
-	r.Get("/web/accounts", h.handleAccountTable)
-	r.Get("/web/accounts/new", h.handleAccountForm)
-	r.Get("/web/accounts/{id}/edit", h.handleAccountEditForm)
-	r.Post("/web/accounts", h.handleAccountCreate)
-	r.Put("/web/accounts/{id}", h.handleAccountUpdate)
-	r.Delete("/web/accounts/{id}", h.handleAccountDelete)
+		// pages
+		r.Get("/", h.handleDashboard)
+		r.Get("/providers", h.handleProviders)
+		r.Get("/accounts", h.handleAccounts)
+		r.Get("/servers", h.handleServers)
+		r.Get("/logs", h.handleLogs)
 
-	// server CRUD
-	r.Get("/web/servers", h.handleServerTable)
-	r.Get("/web/servers/new", h.handleServerForm)
-	r.Get("/web/servers/{id}/edit", h.handleServerEditForm)
-	r.Get("/web/servers/{id}/view", h.handleServerView)
-	r.Post("/web/servers", h.handleServerCreate)
-	r.Put("/web/servers/{id}", h.handleServerUpdate)
-	r.Put("/web/servers/{id}/status", h.handleServerStatusUpdate)
-	r.Delete("/web/servers/{id}", h.handleServerDelete)
+		// provider CRUD
+		r.Get("/web/providers", h.handleProviderTable)
+		r.Get("/web/providers/new", h.handleProviderForm)
+		r.Get("/web/providers/{id}/edit", h.handleProviderEditForm)
+		r.Post("/web/providers", h.handleProviderCreate)
+		r.Put("/web/providers/{id}", h.handleProviderUpdate)
+		r.Delete("/web/providers/{id}", h.handleProviderDelete)
 
-	// logs
-	r.Get("/web/logs", h.handleLogTable)
+		// account CRUD
+		r.Get("/web/accounts", h.handleAccountTable)
+		r.Get("/web/accounts/new", h.handleAccountForm)
+		r.Get("/web/accounts/{id}/edit", h.handleAccountEditForm)
+		r.Post("/web/accounts", h.handleAccountCreate)
+		r.Put("/web/accounts/{id}", h.handleAccountUpdate)
+		r.Delete("/web/accounts/{id}", h.handleAccountDelete)
 
-	// sync
-	r.Post("/web/sync/hetzner", h.handleHetznerSync)
+		// server CRUD
+		r.Get("/web/servers", h.handleServerTable)
+		r.Get("/web/servers/new", h.handleServerForm)
+		r.Get("/web/servers/{id}/edit", h.handleServerEditForm)
+		r.Get("/web/servers/{id}/view", h.handleServerView)
+		r.Post("/web/servers", h.handleServerCreate)
+		r.Put("/web/servers/{id}", h.handleServerUpdate)
+		r.Put("/web/servers/{id}/status", h.handleServerStatusUpdate)
+		r.Delete("/web/servers/{id}", h.handleServerDelete)
 
-	// dashboard
-	r.Get("/web/dashboard", h.handleDashboardContent)
-	r.Get("/web/dashboard/stats", h.handleDashboardStats)
+		// logs
+		r.Get("/web/logs", h.handleLogTable)
 
-	// settings
-	r.Post("/web/theme", h.handleThemeToggle)
+		// sync
+		r.Post("/web/sync/hetzner", h.handleHetznerSync)
+
+		// dashboard
+		r.Get("/web/dashboard", h.handleDashboardContent)
+		r.Get("/web/dashboard/stats", h.handleDashboardStats)
+
+		// settings
+		r.Post("/web/theme", h.handleThemeToggle)
+	})
 }
 
 // templateFuncs returns custom template functions
@@ -194,6 +206,8 @@ func parseTemplates() (*template.Template, error) {
 		"accounts.html",
 		"servers.html",
 		"logs.html",
+		"login.html",
+		"setup.html",
 	}
 
 	for _, name := range pages {

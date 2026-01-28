@@ -28,7 +28,6 @@ func main() {
 
 	setupLog(opts.Debug)
 	log.Printf("[INFO] servers-manager starting")
-
 	// initialize store
 	st, err := store.New(opts.DB)
 	if err != nil {
