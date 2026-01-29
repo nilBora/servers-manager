@@ -18,6 +18,10 @@ func (t Theme) String() string {
 		return "light"
 	case ThemeDark:
 		return "dark"
+	case ThemeDarkElectric:
+		return "dark-electric"
+	case ThemeDarkCyber:
+		return "dark-cyber"
 	}
 	return fmt.Sprintf("Theme(%d)", t)
 }
@@ -31,6 +35,10 @@ func ParseTheme(s string) (Theme, error) {
 		return ThemeLight, nil
 	case "dark":
 		return ThemeDark, nil
+	case "dark-electric":
+		return ThemeDarkElectric, nil
+	case "dark-cyber":
+		return ThemeDarkCyber, nil
 	}
 	return 0, fmt.Errorf("invalid Theme: %q", s)
 }

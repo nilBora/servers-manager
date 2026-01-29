@@ -85,6 +85,23 @@ if (!document.cookie.includes('theme=')) {
     }
 }
 
+// Set theme via select dropdown
+function setTheme(theme) {
+    // Apply theme immediately to avoid flash
+    if (theme === 'light' || theme === '') {
+        document.documentElement.removeAttribute('data-theme');
+    } else {
+        document.documentElement.setAttribute('data-theme', theme);
+    }
+
+    // Save to server via POST
+    fetch('/web/theme', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: 'theme=' + encodeURIComponent(theme)
+    });
+}
+
 // Title case helper for templates
 function title(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);

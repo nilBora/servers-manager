@@ -59,31 +59,23 @@ func (h *Handler) handleDashboardStats(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// handleThemeToggle toggles between light and dark theme
+// handleThemeToggle sets the theme from the request
 func (h *Handler) handleThemeToggle(w http.ResponseWriter, r *http.Request) {
-	current := h.getTheme(r)
-
-	var next enum.Theme
-	switch current {
-	case enum.ThemeLight:
-		next = enum.ThemeDark
-	case enum.ThemeDark:
-		next = enum.ThemeSystem
-	default:
-		next = enum.ThemeLight
+	themeValue := r.FormValue("theme")
+	theme, err := enum.ParseTheme(themeValue)
+	if err != nil {
+		theme = enum.ThemeLight
 	}
 
 	http.SetCookie(w, &http.Cookie{
 		Name:     "theme",
-		Value:    next.String(),
+		Value:    theme.String(),
 		Path:     "/",
 		MaxAge:   365 * 24 * 60 * 60, // 1 year
-		HttpOnly: true,
 		SameSite: http.SameSiteLaxMode,
 	})
 
-	// trigger full page reload via HX-Refresh
-	w.Header().Set("HX-Refresh", "true")
+	w.WriteHeader(http.StatusNoContent)
 }
 
 // handleLogTable renders the log table partial
