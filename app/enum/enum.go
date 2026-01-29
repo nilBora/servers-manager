@@ -24,9 +24,11 @@ const (
 type theme int
 
 const (
-	ThemeSystem theme = iota // enum:alias=
-	ThemeLight
-	ThemeDark
+	ThemeSystem       theme = iota // enum:alias=
+	ThemeLight                     // enum:alias=light
+	ThemeDark                      // enum:alias=dark
+	ThemeDarkElectric              // enum:alias=dark-electric
+	ThemeDarkCyber                 // enum:alias=dark-cyber
 )
 
 //go:generate go run github.com/go-pkgz/enum@latest -type viewMode -lower

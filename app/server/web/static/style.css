@@ -1,45 +1,97 @@
 /* CSS Variables */
 :root {
     --bg-primary: #ffffff;
-    --bg-secondary: #f8f9fa;
-    --bg-tertiary: #e9ecef;
-    --text-primary: #212529;
-    --text-secondary: #6c757d;
-    --text-muted: #adb5bd;
-    --border-color: #dee2e6;
-    --primary: #0d6efd;
-    --primary-hover: #0b5ed7;
-    --success: #198754;
-    --warning: #ffc107;
-    --danger: #dc3545;
-    --danger-hover: #bb2d3b;
-    --shadow: 0 2px 4px rgba(0,0,0,0.1);
-    --shadow-lg: 0 4px 12px rgba(0,0,0,0.15);
-    --radius: 6px;
-    --radius-lg: 12px;
+    --bg-secondary: #f4f7fa;
+    --bg-tertiary: #e1e8f0;
+    --text-primary: #1a202c;
+    --text-secondary: #4a5568;
+    --border-color: #cbd5e0;
+    --primary: #0062ff; /* Глибокий синій */
+    --accent-cyan: #00b4d8; /* Чиста бірюза */
+    --success: #059669;
+    --danger: #e11d48;
 }
 
 [data-theme="dark"] {
-    --bg-primary: #1a1a2e;
-    --bg-secondary: #16213e;
-    --bg-tertiary: #0f3460;
-    --text-primary: #e4e4e4;
-    --text-secondary: #a0a0a0;
-    --text-muted: #6c6c6c;
-    --border-color: #2a2a4a;
-    --shadow: 0 2px 4px rgba(0,0,0,0.3);
-    --shadow-lg: 0 4px 12px rgba(0,0,0,0.4);
+    /* База - Глибокий нічний океан (4.C) */
+    --bg-primary: #0a0e14; /* Майже чорний, але з синім відливом */
+    --bg-secondary: #111821; /* Картки та панелі */
+    --bg-tertiary: #1b2632; /* Ховер-стани та виділення */
+
+    --text-primary: #f5f7fa;
+    --text-secondary: #94a3b8;
+    --text-muted: #475569;
+
+    --border-color: #1e293b;
+
+    /* Акценти - Неонові (2.A, 5) */
+    --primary: #3b82f6;
+    --accent-cyan: #22d3ee; /* Ваша бірюза для графіків */
+
+    /* Статуси з Glow-ефектом */
+    --success: #34d399; /* М'ята */
+    --danger: #f43f5e; /* Маджента-ред */
+
+    /* Додатково для унікальності */
+    --glow-cyan: rgba(34, 211, 238, 0.3);
+    --shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.6);
+}
+
+[data-theme="dark-electric"] {
+    --bg-primary: #0f172a; /* Slate Dark */
+    --bg-secondary: #1e293b; /* На тон світліше */
+    --bg-tertiary: #334155;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --border-color: #1e293b; /* Майже зливається з фоном */
+
+    --primary: #38bdf8; /* Неоновий блакитний */
+    --accent-cyan: #2dd4bf; /* Тіл (бірюзовий) */
+    --success: #34d399;
+    --danger: #fb7185; /* Рожевий відтінок червоного */
+
+    --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark-cyber"] {
+    /* Фон з кольоровим відливом (Ваша відповідь 4.C) */
+    --bg-primary: #050505; /* Майже чорний для фону */
+    --bg-secondary: #0d1117; /* Колір карток (як на GitHub) */
+    --bg-tertiary: #161b22;
+
+    --text-primary: #c9d1d9;
+    --text-secondary: #8b949e;
+    --text-muted: #484f58;
+
+    --border-color: #30363d;
+
+    /* Акценти */
+    --primary: #58a6ff; /* Soft Blue */
+    --accent-cyan: #39c5bb; /* Яскрава бірюза */
+
+    /* Статуси */
+    --success: #3fb950;
+    --warning: #d29922;
+    --danger: #f85149;
+
+    --shadow: 0 0 20px rgba(88, 166, 255, 0.1); /* Легке синє свічення навколо елементів */
 }
 
 /* Reset & Base */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-family:
+        -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+        Arial, sans-serif;
     background: var(--bg-secondary);
     color: var(--text-primary);
     line-height: 1.5;
@@ -229,7 +281,10 @@ body {
 }
 
 .stat-card.stat-cost {
-    border-left-color: var(--primary);
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-left: 4px solid var(--accent-cyan); /* Бірюзовий акцент */
+    backdrop-filter: blur(10px); /* Якщо фон під карткою кольоровий */
 }
 
 .stat-value {
@@ -450,10 +505,22 @@ body {
     text-transform: lowercase;
 }
 
-.provider-hetzner { background: #d50c2d20; color: #d50c2d; }
-.provider-aws { background: #ff990020; color: #ff9900; }
-.provider-scaleway { background: #4f0599; color: white; }
-.provider-vsys_host { background: #00738020; color: #007380; }
+.provider-hetzner {
+    background: #d50c2d20;
+    color: #d50c2d;
+}
+.provider-aws {
+    background: #ff990020;
+    color: #ff9900;
+}
+.provider-scaleway {
+    background: #4f0599;
+    color: white;
+}
+.provider-vsys_host {
+    background: #00738020;
+    color: #007380;
+}
 
 .status-badge {
     display: inline-block;
@@ -463,9 +530,30 @@ body {
     font-weight: 500;
 }
 
-.status-active { background: #19875420; color: var(--success); }
-.status-paused { background: #ffc10720; color: #997404; }
-.status-deleted { background: #dc354520; color: var(--danger); }
+.status-active {
+    background: rgba(52, 211, 153, 0.1);
+    color: var(--success);
+    box-shadow: 0 0 10px var(--glow-cyan); /* Свічення */
+    position: relative;
+}
+.status-active::before {
+    content: "";
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background: var(--success);
+    border-radius: 50%;
+    margin-right: 6px;
+    box-shadow: 0 0 8px var(--success);
+}
+.status-paused {
+    background: #ffc10720;
+    color: #997404;
+}
+.status-deleted {
+    background: #dc354520;
+    color: var(--danger);
+}
 
 .type-badge {
     display: inline-block;
@@ -485,11 +573,26 @@ body {
     font-weight: 500;
 }
 
-.action-added { background: #19875420; color: var(--success); }
-.action-updated { background: #0d6efd20; color: var(--primary); }
-.action-paused { background: #ffc10720; color: #997404; }
-.action-deleted { background: #dc354520; color: var(--danger); }
-.action-synced { background: #6c757d20; color: var(--text-secondary); }
+.action-added {
+    background: #19875420;
+    color: var(--success);
+}
+.action-updated {
+    background: #0d6efd20;
+    color: var(--primary);
+}
+.action-paused {
+    background: #ffc10720;
+    color: #997404;
+}
+.action-deleted {
+    background: #dc354520;
+    color: var(--danger);
+}
+.action-synced {
+    background: #6c757d20;
+    color: var(--text-secondary);
+}
 
 /* Dropdown */
 .status-dropdown {
@@ -566,7 +669,8 @@ body {
     align-items: center;
 }
 
-.modal-header h2, .modal-header h3 {
+.modal-header h2,
+.modal-header h3 {
     font-size: 1.125rem;
     font-weight: 600;
 }
@@ -812,8 +916,12 @@ select.action-filter {
 }
 
 @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .htmx-indicator {
@@ -833,7 +941,9 @@ select.action-filter {
     border-radius: var(--radius-lg);
     overflow: hidden;
     box-shadow: var(--shadow);
-    transition: opacity 0.2s, transform 0.2s;
+    transition:
+        opacity 0.2s,
+        transform 0.2s;
 }
 
 .provider-group-header {
@@ -1027,4 +1137,19 @@ select.action-filter {
     .actions-cell {
         flex-wrap: wrap;
     }
+}
+
+.text-gradient {
+    background: linear-gradient(90deg, var(--primary), var(--accent-cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 800;
+}
+
+/* Приклад для карток статусів */
+.stat-card:hover {
+    border-color: var(--accent-cyan);
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+    box-shadow: 0 0 15px var(--glow-cyan); /* якщо додали змінну glow */
 }
