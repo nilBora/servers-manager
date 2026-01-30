@@ -36,6 +36,7 @@
                         <div class="server-ip">{{if .IP}}{{.IP}}{{else}}-{{end}}</div>
                         {{if .Location}}<div class="server-location">{{.Location}}</div>{{end}}
                         <div class="server-cost">{{.ApproximateCost | formatCost}}</div>
+                        <div class="server-backup {{if .Backups}}backup-on{{else}}backup-off{{end}}" title="{{if .Backups}}Backups enabled{{else}}No backups{{end}}">{{if .Backups}}&#128190;{{else}}&#9888;{{end}}</div>
                     </div>
                     {{if .Responsible}}
                     <div class="server-responsible">{{.Responsible}}</div>

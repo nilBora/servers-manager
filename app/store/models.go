@@ -81,6 +81,7 @@ type Server struct {
 	Description     string            `db:"description"`
 	Responsible     string            `db:"responsible"`
 	ApproximateCost float64           `db:"approximate_cost"`
+	Backups         bool              `db:"backups"`
 	Status          enum.ServerStatus `db:"status"`
 	CreatedAt       time.Time         `db:"created_at"`
 	UpdatedAt       time.Time         `db:"updated_at"`

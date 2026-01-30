@@ -34,6 +34,7 @@ type ServerStore interface {
 	GetServer(ctx context.Context, id int64) (*Server, error)
 	GetServerWithAccount(ctx context.Context, id int64) (*ServerWithAccount, error)
 	FindServerByNameAndAccount(ctx context.Context, name string, accountID int64) (*Server, error)
+	FindServerByIPAndAccount(ctx context.Context, ip string, accountID int64) (*Server, error)
 	ListServers(ctx context.Context) ([]Server, error)
 	ListServersWithAccounts(ctx context.Context) ([]ServerWithAccount, error)
 	ListServersByAccount(ctx context.Context, accountID int64) ([]Server, error)

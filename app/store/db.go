@@ -209,6 +209,19 @@ func (s *DB) runMigrations() error {
 		}
 	}
 
+	// Migration: Add backups column to servers if it doesn't exist
+	err = s.db.Get(&count, `SELECT COUNT(*) FROM pragma_table_info('servers') WHERE name='backups'`)
+	if err != nil {
+		return fmt.Errorf("failed to check servers schema for backups: %w", err)
+	}
+	if count == 0 {
+		_, err := s.db.Exec(`ALTER TABLE servers ADD COLUMN backups INTEGER DEFAULT 0`)
+		if err != nil {
+			return fmt.Errorf("failed to add backups column: %w", err)
+		}
+		log.Printf("[INFO] migration: added backups column to servers")
+	}
+
 	return nil
 }
 

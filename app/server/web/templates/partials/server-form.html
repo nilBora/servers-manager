@@ -53,11 +53,19 @@
                        placeholder="0.00">
             </div>
         </div>
-        <div class="form-group">
-            <label for="responsible">Responsible</label>
-            <input type="text" id="responsible" name="responsible"
-                   value="{{if .Server}}{{.Server.Responsible}}{{end}}"
-                   placeholder="Team or person responsible">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="responsible">Responsible</label>
+                <input type="text" id="responsible" name="responsible"
+                       value="{{if .Server}}{{.Server.Responsible}}{{end}}"
+                       placeholder="Team or person responsible">
+            </div>
+            <div class="form-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" name="backups" {{if and .Server .Server.Backups}}checked{{end}}>
+                    Backups enabled
+                </label>
+            </div>
         </div>
         <div class="form-group">
             <label for="description">Description</label>
