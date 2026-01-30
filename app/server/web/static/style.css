@@ -555,6 +555,43 @@ body {
     color: var(--danger);
 }
 
+/* Backup indicators */
+.backup-cell {
+    text-align: center;
+}
+
+.backup-on {
+    color: var(--success);
+    font-weight: 600;
+}
+
+.backup-off {
+    color: var(--text-muted, var(--text-secondary));
+    opacity: 0.5;
+}
+
+.server-backup {
+    font-size: 0.75rem;
+}
+
+.server-backup.backup-off {
+    color: var(--danger);
+    opacity: 0.7;
+}
+
+.checkbox-label {
+    display: flex !important;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    padding-top: 1.5rem;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+}
+
 .type-badge {
     display: inline-block;
     padding: 0.125rem 0.375rem;

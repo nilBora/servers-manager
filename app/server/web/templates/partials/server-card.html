@@ -27,6 +27,10 @@
             <label>Responsible</label>
             <span class="value">{{if .Server.Responsible}}{{.Server.Responsible}}{{else}}-{{end}}</span>
         </div>
+        <div class="view-item">
+            <label>Backups</label>
+            <span class="value">{{if .Server.Backups}}<span class="backup-on">Enabled</span>{{else}}<span class="backup-off">Disabled</span>{{end}}</span>
+        </div>
     </div>
 
     {{if .Server.Description}}

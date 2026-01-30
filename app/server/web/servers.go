@@ -145,6 +145,7 @@ func (h *Handler) handleServerCreate(w http.ResponseWriter, r *http.Request) {
 		Description:     r.FormValue("description"),
 		Responsible:     r.FormValue("responsible"),
 		ApproximateCost: cost,
+		Backups:         r.FormValue("backups") == "on",
 		Status:          status,
 	}
 
@@ -206,6 +207,7 @@ func (h *Handler) handleServerUpdate(w http.ResponseWriter, r *http.Request) {
 		Description:     r.FormValue("description"),
 		Responsible:     r.FormValue("responsible"),
 		ApproximateCost: cost,
+		Backups:         r.FormValue("backups") == "on",
 		Status:          status,
 	}
 

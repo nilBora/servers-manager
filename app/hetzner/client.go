@@ -29,14 +29,15 @@ func NewClient(apiToken string) *Client {
 
 // Server represents a Hetzner server
 type Server struct {
-	ID         int64      `json:"id"`
-	Name       string     `json:"name"`
-	Status     string     `json:"status"`
-	PublicNet  PublicNet  `json:"public_net"`
-	ServerType ServerType `json:"server_type"`
-	Datacenter Datacenter `json:"datacenter"`
-	Location   Location   `json:"location"`
-	Image      *Image     `json:"image"`
+	ID           int64      `json:"id"`
+	Name         string     `json:"name"`
+	Status       string     `json:"status"`
+	BackupWindow *string    `json:"backup_window"`
+	PublicNet    PublicNet  `json:"public_net"`
+	ServerType   ServerType `json:"server_type"`
+	Datacenter   Datacenter `json:"datacenter"`
+	Location     Location   `json:"location"`
+	Image        *Image     `json:"image"`
 }
 
 // PublicNet contains public network information
@@ -219,6 +220,11 @@ func (s *Server) GetMonthlyPrice() float64 {
 	}
 
 	return 0
+}
+
+// HasBackups returns true if backups are enabled for this server
+func (s *Server) HasBackups() bool {
+	return s.BackupWindow != nil && *s.BackupWindow != ""
 }
 
 // GetDescription returns a description combining server type and OS info

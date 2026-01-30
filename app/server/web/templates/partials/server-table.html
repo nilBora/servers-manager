@@ -9,6 +9,7 @@
             <th>Location</th>
             <th>Status</th>
             <th>Cost</th>
+            <th>Backups</th>
             <th>Responsible</th>
             <th class="actions-col">Actions</th>
         </tr>
@@ -25,6 +26,7 @@
             <td class="location-cell">{{if $server.Location}}{{$server.Location}}{{else}}-{{end}}</td>
             <td>{{template "status-badge" $server.Status}}</td>
             <td class="cost-cell">{{$server.ApproximateCost | formatCost}}</td>
+            <td class="backup-cell">{{if $server.Backups}}<span class="backup-on" title="Backups enabled">&#10003;</span>{{else}}<span class="backup-off" title="No backups">&#10007;</span>{{end}}</td>
             <td>{{if $server.Responsible}}{{$server.Responsible}}{{else}}-{{end}}</td>
             <td class="actions-cell">
                 <button class="btn btn-small btn-secondary"
