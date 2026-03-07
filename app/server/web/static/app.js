@@ -85,6 +85,17 @@ if (!document.cookie.includes('theme=')) {
     }
 }
 
+// Toggle between dark and light theme
+function toggleTheme() {
+    const current = document.documentElement.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    if (next === 'light') {
+        document.documentElement.removeAttribute('data-theme');
+    } else {
+        document.documentElement.setAttribute('data-theme', next);
+    }
+}
+
 // Set theme via select dropdown
 function setTheme(theme) {
     // Apply theme immediately to avoid flash

@@ -6,6 +6,7 @@ import (
 	"math"
 	"net/http"
 	"strings"
+	"time"
 
 	log "github.com/go-pkgz/lgr"
 
@@ -20,22 +21,17 @@ const (
 	ProviderIdentHetznerRobot = "hetzner_robot"
 )
 
-// handleHetznerSync syncs servers from all Hetzner accounts (both Cloud and Robot)
-func (h *Handler) handleHetznerSync(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-
-	// Get all accounts with provider info
+// SyncAll syncs servers from all known provider accounts and returns the number of synced servers.
+func (h *Handler) SyncAll(ctx context.Context) int {
 	accounts, err := h.store.ListAccountsWithProviders(ctx)
 	if err != nil {
 		log.Printf("[ERROR] failed to list accounts: %v", err)
-		h.renderError(w, http.StatusInternalServerError, "Failed to load accounts")
-		return
+		return 0
 	}
 
 	var synced int
 
 	for _, acc := range accounts {
-		// Skip accounts without API keys
 		if acc.ApiKey == "" {
 			continue
 		}
@@ -59,9 +55,33 @@ func (h *Handler) handleHetznerSync(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	log.Printf("[INFO] Hetzner sync completed: %d servers synced", synced)
+	log.Printf("[INFO] sync completed: %d servers synced", synced)
+	return synced
+}
 
-	// Return updated server table
+// StartSync starts a background goroutine that calls SyncAll at the given interval.
+func (h *Handler) StartSync(ctx context.Context, interval time.Duration) {
+	go func() {
+		log.Printf("[INFO] background sync started, interval: %s", interval)
+		ticker := time.NewTicker(interval)
+		defer ticker.Stop()
+
+		for {
+			select {
+			case <-ctx.Done():
+				log.Printf("[INFO] background sync stopped")
+				return
+			case <-ticker.C:
+				log.Printf("[INFO] running scheduled sync")
+				h.SyncAll(ctx)
+			}
+		}
+	}()
+}
+
+// handleHetznerSync handles HTTP-triggered sync and returns the updated server table.
+func (h *Handler) handleHetznerSync(w http.ResponseWriter, r *http.Request) {
+	h.SyncAll(r.Context())
 	h.handleServerTable(w, r)
 }
 
