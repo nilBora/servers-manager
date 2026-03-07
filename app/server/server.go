@@ -77,6 +77,9 @@ func (s *Server) Run(ctx context.Context) error {
 		}
 	}()
 
+	// start daily background sync
+	s.webHandler.StartSync(ctx, 24*time.Hour)
+
 	log.Printf("[INFO] started server on %s", s.Address)
 	if err := httpServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		return fmt.Errorf("server error: %w", err)

@@ -533,7 +533,7 @@ body {
 .status-active {
     background: rgba(52, 211, 153, 0.1);
     color: var(--success);
-    box-shadow: 0 0 10px var(--glow-cyan); /* Свічення */
+    /*box-shadow: 0 0 10px var(--glow-cyan); */ /* Свічення */
     position: relative;
 }
 .status-active::before {
