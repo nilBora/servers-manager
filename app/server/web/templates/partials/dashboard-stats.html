@@ -1,17 +1,44 @@
 {{define "dashboard-stats"}}
 <div class="stat-card">
+    <div class="stat-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="20" height="8" rx="2"/>
+            <rect x="2" y="14" width="20" height="8" rx="2"/>
+            <circle cx="6" cy="6" r="1" fill="currentColor" stroke="none"/>
+            <circle cx="6" cy="18" r="1" fill="currentColor" stroke="none"/>
+        </svg>
+    </div>
     <div class="stat-value">{{.Stats.TotalServers}}</div>
     <div class="stat-label">Total Servers</div>
 </div>
 <div class="stat-card stat-active">
+    <div class="stat-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="9 12 11 14 15 10"/>
+        </svg>
+    </div>
     <div class="stat-value">{{.Stats.ActiveServers}}</div>
     <div class="stat-label">Active</div>
 </div>
 <div class="stat-card stat-paused">
+    <div class="stat-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="10" y1="15" x2="10" y2="9"/>
+            <line x1="14" y1="15" x2="14" y2="9"/>
+        </svg>
+    </div>
     <div class="stat-value">{{.Stats.PausedServers}}</div>
     <div class="stat-label">Paused</div>
 </div>
 <div class="stat-card stat-cost">
+    <div class="stat-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="1" x2="12" y2="23"/>
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+        </svg>
+    </div>
     <div class="stat-value">{{.Stats.TotalCost | formatCost}}</div>
     <div class="stat-label">Monthly Cost</div>
 </div>
