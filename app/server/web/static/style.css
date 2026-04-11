@@ -29,9 +29,9 @@
 
     --text-primary: #f5f7fa;
     --text-secondary: #94a3b8;
-    --text-muted: #475569;
+    --text-muted: #7d93aa; /* було #475569 — ~2.6:1, тепер ~5.1:1 ✓ */
 
-    --border-color: #1e293b;
+    --border-color: #253347; /* було #1e293b — зливався з bg-secondary */
 
     /* Акценти - Неонові (2.A, 5) */
     --primary: #3b82f6;
@@ -45,7 +45,7 @@
     --danger-hover: #fb7185;
 
     /* Додатково для унікальності */
-    --glow-cyan: rgba(34, 211, 238, 0.3);
+    --glow-cyan: rgba(34, 211, 238, 0.1); /* було 0.3 — надто яскраво */
     --shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
     --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.6);
 }
@@ -56,8 +56,8 @@
     --bg-tertiary: #334155;
     --text-primary: #f8fafc;
     --text-secondary: #94a3b8;
-    --text-muted: #64748b;
-    --border-color: #1e293b; /* Майже зливається з фоном */
+    --text-muted: #8b9db5; /* було #64748b — ~3.1:1, тепер ~5.4:1 ✓ */
+    --border-color: #2d4263; /* було #1e293b — збігався з bg-secondary */
 
     --primary: #38bdf8; /* Неоновий блакитний */
     --primary-hover: #7dd3fc;
@@ -67,7 +67,7 @@
     --danger-hover: #fda4af;
     --warning: #fbbf24;
 
-    --glow-cyan: rgba(45, 212, 191, 0.2);
+    --glow-cyan: rgba(45, 212, 191, 0.1);
     --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
     --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
 }
@@ -92,9 +92,9 @@
 
     --text-primary: #c9d1d9;
     --text-secondary: #8b949e;
-    --text-muted: #484f58;
+    --text-muted: #768490; /* було #484f58 — ~2.1:1, тепер ~4.8:1 ✓ */
 
-    --border-color: #30363d;
+    --border-color: #3d444d; /* було #30363d — підтягнули видимість */
 
     /* Акценти */
     --primary: #58a6ff; /* Soft Blue */
@@ -107,8 +107,8 @@
     --primary-hover: #79c0ff;
     --danger-hover: #ff7b72;
 
-    --glow-cyan: rgba(57, 197, 187, 0.2);
-    --shadow: 0 0 20px rgba(88, 166, 255, 0.1);
+    --glow-cyan: rgba(57, 197, 187, 0.1);
+    --shadow: 0 0 20px rgba(88, 166, 255, 0.08);
     --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
